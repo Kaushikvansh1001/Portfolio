@@ -23,6 +23,23 @@ export function IconMail({ className }: { className?: string }) {
   );
 }
 
+export function IconPhone({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <path d="M7.2 3.8 9 3.2c.5-.2 1 .1 1.2.6l1 2.6c.2.5 0 1-.4 1.3L9.4 9c.8 1.7 2 3 3.7 3.8l1.3-1.4c.3-.4.8-.5 1.3-.4l2.6 1c.5.2.8.7.6 1.2l-.6 1.8c-.2.6-.8 1-1.4.9C10.8 16.3 7.7 13.2 6.1 7.2c-.1-.6.3-1.2.9-1.4Z" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function IconPin({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <path d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11Z" />
+      <circle cx="12" cy="10" r="2.2" />
+    </svg>
+  );
+}
+
 export function IconDownload({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
@@ -46,6 +63,72 @@ export function IconMoon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
       <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 0 0 11.5 11.5Z" />
+    </svg>
+  );
+}
+
+export function IconArrow({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <path d="M5 12h14" strokeLinecap="round" />
+      <path d="m13 6 6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function IconArrowUpRight({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M7 17 17 7" strokeLinecap="round" />
+      <path d="M8 7h9v9" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function IconBehance({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M8.4 11.4c.9-.4 1.4-1.1 1.4-2.1 0-1.8-1.3-2.7-3.5-2.7H3v11h3.5c2.4 0 3.9-1.1 3.9-3.1 0-1.3-.7-2.3-2-2.7ZM5.2 8.3h1.5c.8 0 1.3.4 1.3 1.1S7.5 10.5 6.6 10.5H5.2V8.3Zm1.7 7.1H5.2v-2.5h1.7c1 0 1.5.5 1.5 1.3s-.6 1.2-1.5 1.2ZM14.2 8.1h5.1V9h-5.1V8.1ZM21 13.3c0-2.4-1.5-4.1-3.8-4.1-2.4 0-4 1.8-4 4.3 0 2.6 1.6 4.3 4.1 4.3 1.9 0 3.2-.8 3.7-2.4h-1.9c-.3.7-.9 1.1-1.8 1.1-1.2 0-2-.9-2.1-2.2h6V13.3Zm-6-1c.2-1.1.9-1.9 2.1-1.9 1.2 0 1.9.8 2 1.9H15Z" />
+    </svg>
+  );
+}
+
+export function IconHeart({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <path d="M19.5 12.6 12 20l-7.5-7.4a4.5 4.5 0 0 1 6.4-6.3L12 7.1l1.1-.8a4.5 4.5 0 0 1 6.4 6.3Z" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function IconChevronLeft({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden>
+      <path d="m15 6-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function IconChevronRight({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden>
+      <path d="m9 6 6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function IconChevronDown({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden>
+      <path d="m6 9 6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function IconChevronUp({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden>
+      <path d="m6 15 6-6 6 6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -138,6 +221,14 @@ export function IconDevice({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
       <rect x="6" y="3" width="12" height="18" rx="2" />
       <path d="M10 17h4" />
+    </svg>
+  );
+}
+
+export function IconSparkle({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M12 1.6 13.85 8.4 20.8 10.2 13.85 12 12 18.8 10.15 12 3.2 10.2 10.15 8.4 12 1.6Z" />
     </svg>
   );
 }

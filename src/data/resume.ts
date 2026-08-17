@@ -9,8 +9,11 @@ export const profile = {
   email: "vanshkaushik1802@gmail.com",
   github: "https://github.com/Kaushikvansh1001",
   githubHandle: "Kaushikvansh1001",
-  linkedin: "https://www.linkedin.com/in/vansh-kaushik",
+  linkedin: "https://www.linkedin.com/in/vanshkaushik7776",
+  behance: "https://www.behance.net/vanshkaushik6",
   resumeFile: "/VanshKaushik_Resume.pdf",
+  heroPhoto: "/vansh-hero.png",
+  tagline: "Turning ideas into powerful digital experiences.",
   summary:
     "Python Developer with experience building backend applications, database-driven systems, and automation solutions using Python, Flask, PostgreSQL, and MySQL. Skilled in deploying web and mobile applications on AWS and Hostinger, with strong UI/UX instincts for intuitive products.",
   heroBio:
@@ -19,6 +22,33 @@ export const profile = {
   aboutBody:
     "From Flask dashboards and automated email systems to live recruitment and aviation platforms, I focus on clean APIs, solid databases, and deployments that hold up in production. I also bring UI/UX awareness so products feel as good as they perform.",
 };
+
+export const socials = [
+  {
+    id: "linkedin",
+    name: "LinkedIn",
+    detail: "vanshkaushik7776",
+    href: profile.linkedin,
+  },
+  {
+    id: "github",
+    name: "GitHub",
+    detail: profile.githubHandle,
+    href: profile.github,
+  },
+  {
+    id: "behance",
+    name: "Behance",
+    detail: "vanshkaushik6",
+    href: profile.behance,
+  },
+  {
+    id: "gmail",
+    name: "Gmail",
+    detail: profile.email,
+    href: `mailto:${profile.email}`,
+  },
+] as const;
 
 export const highlights = [
   "Clean & Efficient Backend Code",
@@ -104,7 +134,18 @@ export const experience = [
   },
 ];
 
-export const projects = [
+export type Project = {
+  name: string;
+  category: string;
+  description: string;
+  url?: string;
+  featured: boolean;
+  accent: string;
+  image?: string;
+  images?: string[];
+};
+
+export const projects: Project[] = [
   {
     name: "MoonsJob",
     category: "Recruitment Platform",
@@ -113,6 +154,12 @@ export const projects = [
     url: "https://moonsjob.com",
     featured: true,
     accent: "#2f6fed",
+    image: "/projects/moonsjob/landing.png",
+    images: [
+      "/projects/moonsjob/landing.png",
+      "/projects/moonsjob/dashboard.png",
+      "/projects/moonsjob/jobs.png",
+    ],
   },
   {
     name: "Raymoon Services",
@@ -122,6 +169,12 @@ export const projects = [
     url: "https://raymoongroup.com",
     featured: true,
     accent: "#c9a227",
+    image: "/projects/raymoon/hero.png",
+    images: [
+      "/projects/raymoon/hero.png",
+      "/projects/raymoon/connect.png",
+      "/projects/raymoon/hr.png",
+    ],
   },
   {
     name: "Novastraa",
@@ -162,7 +215,7 @@ export const projects = [
     description:
       "Online education and competitive exam preparation platform.",
     url: "https://examoneducation.com",
-    featured: false,
+    featured: true,
     accent: "#7c3aed",
   },
   {
@@ -171,7 +224,7 @@ export const projects = [
     description:
       "Travel platform featuring destinations, packages, and enquiry management.",
     url: "https://asiagotravels.com",
-    featured: false,
+    featured: true,
     accent: "#0891b2",
   },
   {
@@ -193,32 +246,33 @@ export const projects = [
   },
 ];
 
-export const skills = [
-  {
-    category: "Languages",
-    items: ["Python", "JavaScript", "HTML", "CSS", "SQL"],
-  },
-  {
-    category: "Back-End",
-    items: ["Flask", "Django", "Node.js"],
-  },
-  {
-    category: "Database",
-    items: ["PostgreSQL", "MySQL", "MongoDB"],
-  },
-  {
-    category: "Deployment",
-    items: ["AWS", "Hostinger", "Web & Mobile App Deployment"],
-  },
-  {
-    category: "UI / UX",
-    items: ["Figma", "UI Design", "Prototyping", "User Experience"],
-  },
-  {
-    category: "Tools",
-    items: ["Git", "GitHub"],
-  },
-];
+export const techCategories = [
+  { id: "languages", label: "Languages" },
+  { id: "database", label: "Database" },
+  { id: "devops", label: "DevOps" },
+  { id: "uiux", label: "UI/UX" },
+  { id: "tools", label: "Tools" },
+] as const;
+
+export const technologies = [
+  { name: "Python", logo: "python", category: "languages", level: 90 },
+  { name: "JavaScript", logo: "javascript", category: "languages", level: 78 },
+  { name: "HTML 5", logo: "html5", category: "languages", level: 88 },
+  { name: "CSS 3", logo: "css3", category: "languages", level: 82 },
+  { name: "Flask", logo: "flask", category: "languages", level: 88 },
+  { name: "Django", logo: "django", category: "languages", level: 80 },
+  { name: "Node.js", logo: "nodejs", category: "languages", level: 75 },
+  { name: "PostgreSQL", logo: "postgresql", category: "database", level: 86 },
+  { name: "MySQL", logo: "mysql", category: "database", level: 84 },
+  { name: "MongoDB", logo: "mongodb", category: "database", level: 72 },
+  { name: "AWS", logo: "aws", category: "devops", level: 76 },
+  { name: "Hostinger", logo: "hostinger", category: "devops", level: 84 },
+  { name: "Play Store", logo: "playstore", category: "devops", level: 74 },
+  { name: "App Store", logo: "appstore", category: "devops", level: 70 },
+  { name: "Figma", logo: "figma", category: "uiux", level: 74 },
+  { name: "Git", logo: "git", category: "tools", level: 86 },
+  { name: "GitHub", logo: "github", category: "tools", level: 86 },
+] as const;
 
 export const process = [
   {

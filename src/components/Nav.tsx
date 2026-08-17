@@ -1,18 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  IconMoon,
-  IconSun,
-} from "@/components/Icons";
+import { IconChevronRight, IconMoon, IconSun } from "@/components/Icons";
 import { useTheme } from "@/components/ThemeProvider";
 import styles from "@/app/page.module.css";
 
 const links = [
-  { href: "#home", label: "Home" },
   { href: "#about", label: "About" },
   { href: "#services", label: "Services" },
-  { href: "#portfolio", label: "Portfolio" },
+  { href: "#portfolio", label: "Projects" },
   { href: "#experience", label: "Experience" },
   { href: "#contact", label: "Contact" },
 ];
@@ -33,24 +29,20 @@ export default function Nav() {
     <header
       className={`${styles.nav} ${scrolled ? styles.navScrolled : ""} ${open ? styles.navOpen : ""}`}
     >
-      <div className={styles.navInner}>
+      <div className={styles.navBar}>
         <a className={styles.logo} href="#home" onClick={() => setOpen(false)}>
           Vansh<span>.</span>
         </a>
 
         <nav className={styles.navLinks} aria-label="Primary">
           {links.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={() => setOpen(false)}
-            >
+            <a key={link.href} href={link.href} onClick={() => setOpen(false)}>
               {link.label}
             </a>
           ))}
         </nav>
 
-        <div className={styles.navActions}>
+        <div className={styles.navEnd}>
           <button
             type="button"
             className={styles.themeBtn}
@@ -61,8 +53,11 @@ export default function Nav() {
           >
             {theme === "dark" ? <IconSun /> : <IconMoon />}
           </button>
-          <a className={styles.navCta} href="#contact">
-            Let&apos;s Talk
+          <a className={styles.navCta} href="#contact" onClick={() => setOpen(false)}>
+            <span className={styles.navCtaIcon} aria-hidden="true">
+              <IconChevronRight />
+            </span>
+            <span className={styles.navCtaText}>Get in Touch</span>
           </a>
           <button
             type="button"
@@ -77,6 +72,14 @@ export default function Nav() {
           </button>
         </div>
       </div>
+
+      <nav className={styles.navMobile} aria-label="Mobile">
+        {links.map((link) => (
+          <a key={link.href} href={link.href} onClick={() => setOpen(false)}>
+            {link.label}
+          </a>
+        ))}
+      </nav>
     </header>
   );
 }

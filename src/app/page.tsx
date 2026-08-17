@@ -1,18 +1,23 @@
+import type { CSSProperties } from "react";
 import Image from "next/image";
+import HeroScroll from "@/components/HeroScroll";
 import Nav from "@/components/Nav";
+import ExperienceReveal from "@/components/ExperienceReveal";
+import ProcessReveal from "@/components/ProcessReveal";
+import ProjectShowcase from "@/components/ProjectShowcase";
+import TechStack from "@/components/TechStack";
+import ContactForm from "@/components/ContactForm";
+import SocialIcon from "@/components/SocialIcon";
 import {
-  IconBadge,
-  IconBolt,
-  IconBriefcase,
+  IconArrowUpRight,
+  IconBehance,
   IconCheck,
-  IconDevice,
-  IconDownload,
   IconGithub,
-  IconGlobe,
   IconLinkedin,
   IconMail,
+  IconPhone,
+  IconPin,
   IconPulse,
-  IconUsers,
   ProcessIcon,
   ServiceIcon,
 } from "@/components/Icons";
@@ -24,100 +29,92 @@ import {
   profile,
   projects,
   services,
-  skills,
-  stats,
+  socials,
 } from "@/data/resume";
 import styles from "./page.module.css";
 
-const statIcons = [IconBolt, IconUsers, IconBriefcase, IconBadge];
+const heroStats = [
+  { value: "1.6+", label: "Years Experience" },
+  { value: "10+", label: "Projects Completed" },
+  { value: "8+", label: "Live Web Apps" },
+];
 
 export default function Home() {
-  const featured = projects.filter((project) => project.featured);
-  const more = projects.filter((project) => !project.featured);
-
   return (
     <>
       <Nav />
       <main>
-        <section className={`${styles.hero} container`} id="home">
-          <div className={styles.heroGrid}>
-            <div>
-              <p className={styles.eyebrow}>Hello, I&apos;m</p>
-              <h1 className={styles.heroName}>
-                {profile.firstName} <em>{profile.lastName}</em>
-              </h1>
-              <p className={styles.heroTitle}>{profile.shortTitle}</p>
-              <p className={styles.heroBio}>{profile.heroBio}</p>
-              <div className={styles.heroActions}>
-                <a className={styles.btnPrimary} href="#portfolio">
-                  View My Work
-                </a>
-                <a
-                  className={styles.btnOutline}
-                  href={profile.resumeFile}
-                  download
-                >
-                  <IconDownload />
-                  Download CV
-                </a>
-              </div>
-              <div className={styles.socialRow}>
-                <a
-                  href={profile.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="GitHub"
-                >
-                  <IconGithub />
-                </a>
-                <a
-                  href={profile.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="LinkedIn"
-                >
-                  <IconLinkedin />
-                </a>
-                <a href={`mailto:${profile.email}`} aria-label="Email">
-                  <IconMail />
-                </a>
-              </div>
+        <HeroScroll>
+          <div className={styles.heroFrame}>
+            <div className={styles.heroGlow} aria-hidden="true" />
+            <p className={styles.heroWord} aria-hidden="true">
+              PORTFOLIO
+            </p>
+
+            <div className={styles.heroPhoto}>
+              <Image
+                src={profile.heroPhoto}
+                alt={profile.name}
+                width={900}
+                height={1200}
+                priority
+              />
             </div>
 
-            <div className={styles.heroVisual} aria-hidden="true">
-              <div className={styles.heroOrb} />
-              <div className={styles.heroRing} />
-              <div className={styles.heroPortrait}>
-                <Image
-                  src="/vansh-portrait.png"
-                  alt="Vansh Kaushik"
-                  width={640}
-                  height={640}
-                  priority
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className={`${styles.stats} container`} aria-label="Highlights">
-          <div className={styles.statsGrid}>
-            {stats.map((stat, index) => {
-              const Icon = statIcons[index] ?? IconBolt;
-              return (
-                <div className={styles.statItem} key={stat.label}>
-                  <div className={styles.statIcon}>
-                    <Icon />
-                  </div>
-                  <div>
-                    <span className={styles.statValue}>{stat.value}</span>
-                    <span className={styles.statLabel}>{stat.label}</span>
-                  </div>
+            <div className={styles.heroContent}>
+              <div className={styles.heroLeft}>
+                <p className={styles.eyebrow}>Hello, I&apos;m</p>
+                <h1 className={styles.heroName}>
+                  {profile.firstName}
+                  <span>{profile.lastName}</span>
+                </h1>
+                <p className={styles.heroTitle}>
+                  Python Developer &amp; Back-End Engineer
+                </p>
+                <p className={styles.heroBio}>{profile.heroBio}</p>
+                <div className={styles.heroSocials}>
+                  <a
+                    href={profile.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="LinkedIn"
+                  >
+                    <IconLinkedin />
+                  </a>
+                  <a
+                    href={profile.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="GitHub"
+                  >
+                    <IconGithub />
+                  </a>
+                  <a
+                    href={profile.behance}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Behance"
+                  >
+                    <IconBehance />
+                  </a>
+                  <a href={`mailto:${profile.email}`} aria-label="Email">
+                    <IconMail />
+                  </a>
                 </div>
-              );
-            })}
+              </div>
+
+            </div>
+
+            <div className={styles.heroStats}>
+              {heroStats.map((stat) => (
+                <div className={styles.heroStat} key={stat.label}>
+                  <span className={styles.heroStatValue}>{stat.value}</span>
+                  <span className={styles.heroStatLabel}>{stat.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </section>
+        </HeroScroll>
 
         <section className={`${styles.section} ${styles.sectionAlt}`} id="about">
           <div className="container">
@@ -140,8 +137,13 @@ export default function Home() {
               </div>
               <div className={styles.aboutVisual}>
                 <div className={styles.aboutImage}>
-                  <div className={styles.deskMock} />
-                  <div className={styles.experienceBadge}>3+ Years Experience</div>
+                  <img
+                    src="/about_me_sec.png"
+                    alt="Backend stack: Python, Flask, REST APIs, PostgreSQL, and AWS"
+                    width={1536}
+                    height={1024}
+                    className={styles.aboutPhoto}
+                  />
                 </div>
               </div>
             </div>
@@ -161,7 +163,7 @@ export default function Home() {
             <div className={styles.servicesGrid}>
               {services.map((service) => (
                 <article className={styles.serviceCard} key={service.title}>
-                  <div className={styles.serviceIcon}>
+                  <div className={styles.serviceIconBox}>
                     <ServiceIcon name={service.icon} />
                   </div>
                   <h3>{service.title}</h3>
@@ -182,11 +184,15 @@ export default function Home() {
                 <h2>My Work Process</h2>
               </div>
 
-              <div className={styles.processTrack}>
+              <ProcessReveal>
                 <span className={styles.processLine} aria-hidden="true" />
                 <ol className={styles.processSteps}>
-                  {process.map((step) => (
-                    <li className={styles.processStep} key={step.number}>
+                  {process.map((step, index) => (
+                    <li
+                      className={styles.processStep}
+                      key={step.number}
+                      style={{ "--step": index } as CSSProperties}
+                    >
                       <div className={styles.processNode}>
                         <ProcessIcon name={step.icon} />
                       </div>
@@ -196,149 +202,76 @@ export default function Home() {
                     </li>
                   ))}
                 </ol>
-              </div>
+              </ProcessReveal>
             </article>
           </div>
         </section>
 
         <section className={`${styles.section} ${styles.sectionAlt}`} id="portfolio">
           <div className="container">
-            <div className={styles.sectionHeadRow}>
-              <div>
-                <p className={styles.kicker}>Featured Projects</p>
-                <h2 className={styles.sectionTitle}>My Recent Work</h2>
-              </div>
-              <a className={styles.viewAll} href="#all-projects">
-                View All Projects →
-              </a>
-            </div>
-
-            <div className={styles.projectGrid}>
-              {featured.map((project) => {
-                const card = (
-                  <>
-                    <div
-                      className={styles.projectThumb}
-                      style={{
-                        background: `linear-gradient(145deg, ${project.accent}, #111 78%)`,
-                      }}
-                    >
-                      <span>{project.name}</span>
-                    </div>
-                    <div className={styles.projectBody}>
-                      <h3>{project.name}</h3>
-                      <p className={styles.projectCategory}>{project.category}</p>
-                      <p className={styles.projectDesc}>{project.description}</p>
-                    </div>
-                  </>
-                );
-
-                return project.url ? (
-                  <a
-                    className={styles.projectCard}
-                    key={project.name}
-                    href={project.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {card}
-                  </a>
-                ) : (
-                  <article className={styles.projectCard} key={project.name}>
-                    {card}
-                  </article>
-                );
-              })}
-            </div>
-
-            <div className={styles.moreProjects} id="all-projects">
-              {more.map((project) =>
-                project.url ? (
-                  <a
-                    className={styles.moreItem}
-                    key={project.name}
-                    href={project.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <div>
-                      <h4>{project.name}</h4>
-                      <p>
-                        {project.category} — {project.description}
-                      </p>
-                    </div>
-                    <span className={styles.moreLink}>Visit ↗</span>
-                  </a>
-                ) : (
-                  <div className={styles.moreItem} key={project.name}>
-                    <div>
-                      <h4>{project.name}</h4>
-                      <p>
-                        {project.category} — {project.description}
-                      </p>
-                    </div>
-                    <span className={styles.moreLink}>Private</span>
-                  </div>
-                ),
-              )}
+            <div className={styles.sectionHeadCenter}>
+              <p className={styles.kicker}>Featured Projects</p>
+              <h2 className={styles.sectionTitle}>My Recent Work</h2>
+              <p className={styles.sectionLead}>
+                Live platforms and backend systems shipped with Python, Flask,
+                and production deployments.
+              </p>
             </div>
           </div>
+          <ProjectShowcase projects={projects} />
         </section>
 
-        <section className={styles.section} id="experience">
+        <section className={`${styles.section} ${styles.experienceSection}`} id="experience">
           <div className="container">
             <div className={styles.sectionHeadCenter}>
               <p className={styles.kicker}>Experience</p>
               <h2 className={styles.sectionTitle}>Where I&apos;ve Worked</h2>
             </div>
-            <div className={styles.timeline}>
-              {experience.map((job) => (
-                <article className={styles.jobCard} key={`${job.company}-${job.role}`}>
-                  <div className={styles.jobMeta}>
-                    <div>
-                      <h3>{job.role}</h3>
-                      <p className={styles.jobCompany}>{job.company}</p>
+            <ExperienceReveal>
+              {experience.map((job, index) => (
+                <div
+                  className={`${styles.expItem}${job.period.includes("Present") ? ` ${styles.expCurrent}` : ""}`}
+                  key={`${job.company}-${job.role}`}
+                  style={{ "--i": index } as CSSProperties}
+                >
+                  <span className={styles.expNode} aria-hidden="true" />
+                  <article className={styles.expCard}>
+                    <div className={styles.jobMeta}>
+                      <div>
+                        <p className={styles.jobCompany}>{job.company}</p>
+                        <h3>{job.role}</h3>
+                      </div>
+                      <p className={styles.jobPeriod}>
+                        {job.period.includes("Present") ? (
+                          <span className={styles.expLive} aria-hidden="true" />
+                        ) : null}
+                        {job.period}
+                      </p>
                     </div>
-                    <p className={styles.jobPeriod}>{job.period}</p>
-                  </div>
-                  <ul>
-                    {job.points.map((point) => (
-                      <li key={point}>{point}</li>
-                    ))}
-                  </ul>
-                </article>
+                    <ul>
+                      {job.points.map((point) => (
+                        <li key={point}>{point}</li>
+                      ))}
+                    </ul>
+                  </article>
+                </div>
               ))}
-            </div>
+            </ExperienceReveal>
           </div>
         </section>
 
         <section className={`${styles.section} ${styles.sectionAlt}`} id="skills">
           <div className="container">
-            <div className={styles.sectionHeadCenter}>
-              <p className={styles.kicker}>Skills</p>
-              <h2 className={styles.sectionTitle}>Tech Stack</h2>
-            </div>
-            <div className={styles.skillsGrid}>
-              {skills.map((group) => (
-                <div className={styles.skillCard} key={group.category}>
-                  <h3>{group.category}</h3>
-                  <ul>
-                    {group.items.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
+            <TechStack />
 
-            <div style={{ marginTop: "2.5rem" }}>
+            <div className={styles.eduWrap}>
               <div className={styles.sectionHeadCenter}>
                 <p className={styles.kicker}>Education</p>
                 <h2 className={styles.sectionTitle}>Academic Background</h2>
               </div>
-              <div className={styles.timeline}>
+              <div className={styles.eduGrid}>
                 {education.map((item) => (
-                  <article className={styles.jobCard} key={item.degree}>
+                  <article className={`${styles.jobCard} ${styles.eduCard}`} key={item.degree}>
                     <div className={styles.jobMeta}>
                       <div>
                         <h3>{item.degree}</h3>
@@ -354,46 +287,104 @@ export default function Home() {
           </div>
         </section>
 
-        <section className={styles.section} id="contact">
+        <section className={`${styles.section} ${styles.contactSection}`} id="contact">
           <div className="container">
-            <div className={styles.ctaBand}>
-              <div>
-                <h2>Let&apos;s Work Together!</h2>
-                <p>
-                  Open to backend roles, freelance builds, and collaborations.
-                  Based in {profile.location}.
+            <div className={styles.contactGrid}>
+              <div className={styles.contactInfo}>
+                <p className={styles.contactBadge}>Contact</p>
+                <h2 className={styles.sectionTitle}>Get in touch</h2>
+                <p className={styles.contactIntro}>
+                  Have a project in mind, or want to talk about a backend role
+                  or freelance build?
                 </p>
+
+                <div className={styles.contactCards}>
+                  <a className={styles.contactCard} href={`mailto:${profile.email}`}>
+                    <span className={styles.contactCardIcon}>
+                      <IconMail />
+                    </span>
+                    <span>
+                      <strong>Email me</strong>
+                      <em>{profile.email}</em>
+                    </span>
+                    <span className={styles.contactCardGo}>
+                      <IconArrowUpRight />
+                    </span>
+                  </a>
+                  <a
+                    className={styles.contactCard}
+                    href={`tel:${profile.phone.replace(/\s/g, "")}`}
+                  >
+                    <span className={styles.contactCardIcon}>
+                      <IconPhone />
+                    </span>
+                    <span>
+                      <strong>Call me</strong>
+                      <em>{profile.phone}</em>
+                    </span>
+                    <span className={styles.contactCardGo}>
+                      <IconArrowUpRight />
+                    </span>
+                  </a>
+                  <a
+                    className={styles.contactCard}
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(profile.location)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className={styles.contactCardIcon}>
+                      <IconPin />
+                    </span>
+                    <span>
+                      <strong>My location</strong>
+                      <em>{profile.location}</em>
+                    </span>
+                    <span className={styles.contactCardGo}>
+                      <IconArrowUpRight />
+                    </span>
+                  </a>
+                </div>
               </div>
-              <a className={styles.btnPrimary} href={`mailto:${profile.email}`}>
-                Contact Me
-              </a>
+
+              <ContactForm />
             </div>
           </div>
         </section>
 
-        <footer className={`${styles.footer} container`}>
-          <div className={styles.footerLinks}>
-            <a href="#home">Home</a>
-            <a href="#about">About</a>
-            <a href="#services">Services</a>
-            <a href="#portfolio">Portfolio</a>
-            <a href="#experience">Experience</a>
-            <a href="#contact">Contact</a>
+        <section className={`${styles.section} ${styles.sectionAlt}`} id="social">
+          <div className={`container ${styles.socialRow}`}>
+            <div>
+              <p className={styles.kicker}>Social</p>
+              <h2 className={styles.sectionTitle}>Find me online</h2>
+            </div>
+            <div className={styles.socialGrid}>
+              {socials.map((item) =>
+                item.href ? (
+                  <a
+                    className={styles.socialLink}
+                    key={item.id}
+                    href={item.href}
+                    {...(item.href.startsWith("http")
+                      ? { target: "_blank", rel: "noopener noreferrer" }
+                      : {})}
+                    aria-label={item.name}
+                  >
+                    <SocialIcon id={item.id} name={item.name} />
+                  </a>
+                ) : (
+                  <span className={styles.socialLink} key={item.id}>
+                    <SocialIcon id={item.id} name={item.name} />
+                  </span>
+                ),
+              )}
+            </div>
           </div>
-          <p className={styles.copyright}>
-            © {new Date().getFullYear()} {profile.name}. All Rights Reserved.
+        </section>
+
+        <footer className={styles.footer}>
+          <p>
+            © {new Date().getFullYear()} {profile.name}. All rights reserved.
           </p>
-          <div className={styles.featureRow}>
-            <span className={styles.featureItem}>
-              <IconBolt /> Fast Loading
-            </span>
-            <span className={styles.featureItem}>
-              <IconDevice /> Fully Responsive
-            </span>
-            <span className={styles.featureItem}>
-              <IconGlobe /> Cross Browser Compatible
-            </span>
-          </div>
         </footer>
       </main>
     </>
