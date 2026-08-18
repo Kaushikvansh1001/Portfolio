@@ -10,7 +10,7 @@ const links = [
   { href: "#services", label: "Services" },
   { href: "#portfolio", label: "Projects" },
   { href: "#experience", label: "Experience" },
-  { href: "#contact", label: "Contact" },
+  { href: "#skills", label: "Skills" },
 ];
 
 export default function Nav() {
@@ -30,10 +30,6 @@ export default function Nav() {
       className={`${styles.nav} ${scrolled ? styles.navScrolled : ""} ${open ? styles.navOpen : ""}`}
     >
       <div className={styles.navBar}>
-        <a className={styles.logo} href="#home" onClick={() => setOpen(false)}>
-          Vansh<span>.</span>
-        </a>
-
         <nav className={styles.navLinks} aria-label="Primary">
           {links.map((link) => (
             <a key={link.href} href={link.href} onClick={() => setOpen(false)}>

@@ -113,16 +113,6 @@ export const experience = [
     ],
   },
   {
-    role: "Full Stack Developer (Internship)",
-    company: "STPI Apiary",
-    period: "Jun 2024 — Aug 2024",
-    points: [
-      "Developed a Flask-based admin dashboard to manage clients, services, and deadlines.",
-      "Integrated PostgreSQL for client and service data management.",
-      "Implemented automated email reminders using SMTP, Flask-Mail, and APScheduler.",
-    ],
-  },
-  {
     role: "Python Developer (Internship)",
     company: "TechnoHacks Edutech",
     period: "Aug 2024 — Sep 2024",
@@ -130,6 +120,16 @@ export const experience = [
       "Worked with Python libraries and database integration.",
       "Built functional modules while following structured development practices.",
       "Gained hands-on experience in backend development and problem-solving.",
+    ],
+  },
+  {
+    role: "Full Stack Developer (Internship)",
+    company: "STPI Apiary",
+    period: "Jun 2024 — Aug 2024",
+    points: [
+      "Developed a Flask-based admin dashboard to manage clients, services, and deadlines.",
+      "Integrated PostgreSQL for client and service data management.",
+      "Implemented automated email reminders using SMTP, Flask-Mail, and APScheduler.",
     ],
   },
 ];
