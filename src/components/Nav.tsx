@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { IconChevronRight, IconMoon, IconSun } from "@/components/Icons";
+import { IconArrow, IconMoon, IconSun } from "@/components/Icons";
 import { useTheme } from "@/components/ThemeProvider";
 import styles from "@/app/page.module.css";
 
@@ -54,10 +54,10 @@ export default function Nav() {
             {theme === "dark" ? <IconSun /> : <IconMoon />}
           </button>
           <a className={styles.navCta} href="#contact" onClick={() => setOpen(false)}>
-            <span className={styles.navCtaIcon} aria-hidden="true">
-              <IconChevronRight />
-            </span>
             <span className={styles.navCtaText}>Get in Touch</span>
+            <span className={styles.navCtaIcon} aria-hidden="true">
+              <IconArrow />
+            </span>
           </a>
           <button
             type="button"

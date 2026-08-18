@@ -207,10 +207,12 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
                 <CoverGallery project={project} playing={paused && isActive} />
               </div>
 
+              <p className={styles.coverCategory}>{project.category}</p>
+
               <div className={styles.coverMeta}>
-                <div>
+                <div className={styles.coverCopy}>
                   <h3>{project.name}</h3>
-                  <p>{project.category}</p>
+                  <p className={styles.coverBlurb}>{project.description}</p>
                 </div>
                 {project.url ? (
                   <a

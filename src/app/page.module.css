@@ -104,44 +104,54 @@
 .navCta {
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
-  min-height: 2.5rem;
-  padding: 0.22rem 0.95rem 0.22rem 0.22rem;
+  gap: 0.15rem;
+  min-height: 2.55rem;
+  padding: 0.18rem 0.55rem 0.18rem 0.18rem;
+  border: none;
   border-radius: 999px;
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--bg-elevated) 78%, transparent);
-  color: var(--text);
+  background: #2a2a2a;
+  color: #fff;
   font-size: 0.88rem;
   font-weight: 600;
   letter-spacing: 0;
   text-transform: none;
-  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .navCta:hover {
   transform: translateY(-1px);
-  background: color-mix(in srgb, var(--bg-elevated) 100%, transparent);
-  color: var(--text);
+  background: #333;
+  color: #fff;
+}
+
+.navCta:hover .navCtaIcon {
+  transform: translateX(2px);
+}
+
+.navCtaText {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.2rem;
+  padding: 0.4rem 1.15rem;
+  border-radius: 999px;
+  background: #141414;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .navCtaIcon {
-  width: 1.95rem;
-  height: 1.95rem;
-  border-radius: 50%;
-  background: #fff;
-  color: #111;
+  width: 1.55rem;
+  height: 1.55rem;
   display: grid;
   place-items: center;
+  color: #fff;
+  transition: transform 0.2s ease;
 }
 
 .navCtaIcon svg {
-  width: 0.85rem;
-  height: 0.85rem;
-}
-
-[data-theme="light"] .navCtaIcon {
-  background: #141414;
-  color: #fff;
+  width: 0.95rem;
+  height: 0.95rem;
 }
 
 .menuBtn {
@@ -641,8 +651,8 @@
 
 .aboutGrid {
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  gap: clamp(2rem, 5vw, 3.5rem);
+  grid-template-columns: 0.95fr 1.15fr;
+  gap: clamp(1.4rem, 4vw, 2.6rem);
   align-items: center;
 }
 
@@ -690,6 +700,7 @@
 
 .aboutVisual {
   position: relative;
+  margin-right: -0.4rem;
 }
 
 .aboutImage {
@@ -701,7 +712,9 @@
   display: block;
   width: 100%;
   height: auto;
-  max-width: 100%;
+  max-width: none;
+  transform: scale(1.12);
+  transform-origin: center center;
 }
 
 .servicesGrid {
@@ -779,21 +792,18 @@
 }
 
 .processCard {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: 1.1rem;
-  padding: clamp(1.4rem, 3.5vw, 2.1rem) clamp(1.2rem, 3vw, 2rem) clamp(1.6rem, 4vw, 2.4rem);
-  box-shadow:
-    var(--shadow),
-    0 0 0 1px color-mix(in srgb, var(--gold) 8%, transparent),
-    0 0 48px var(--gold-soft);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
 }
 
 .processHead {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.7rem;
-  margin-bottom: clamp(2rem, 5vw, 2.8rem);
+  margin-bottom: clamp(2.2rem, 5vw, 3rem);
 }
 
 .processHeadIcon {
@@ -821,6 +831,7 @@
 
 .processTrack {
   position: relative;
+  --process-cycle: 9s;
 }
 
 .processSteps {
@@ -833,32 +844,7 @@
 }
 
 .processLine {
-  position: absolute;
-  top: 3rem;
-  left: calc(100% / 12);
-  right: calc(100% / 12);
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--gold) 4%,
-    var(--gold) 96%,
-    transparent
-  );
-  box-shadow: 0 0 12px var(--ring-glow);
-  pointer-events: none;
-  z-index: 0;
-  transform-origin: left center;
-}
-
-.processLine::before {
-  content: "";
-  position: absolute;
-  inset: -3px 0;
-  background-image: radial-gradient(circle, var(--gold) 2.5px, transparent 2.7px);
-  background-size: calc(100% / 5) 100%;
-  background-position: calc(100% / 10) 50%;
-  background-repeat: repeat-x;
+  display: none;
 }
 
 .processStep {
@@ -876,23 +862,14 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  color: var(--gold);
+  color: color-mix(in srgb, var(--gold) 55%, var(--text-muted));
   background: var(--bg-card);
-  border: 2px solid var(--gold);
+  border: 2px solid color-mix(in srgb, var(--gold) 35%, transparent);
   box-shadow:
-    0 0 0 7px var(--bg-elevated),
-    0 0 0 9px color-mix(in srgb, var(--gold) 45%, transparent),
-    0 0 26px var(--ring-glow);
+    0 0 0 7px var(--bg),
+    0 0 0 8px color-mix(in srgb, var(--gold) 18%, transparent);
   margin-bottom: 1.1rem;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.processStep:hover .processNode {
-  transform: translateY(-3px);
-  box-shadow:
-    0 0 0 7px var(--bg-elevated),
-    0 0 0 9px color-mix(in srgb, var(--gold) 70%, transparent),
-    0 0 32px var(--ring-glow);
+  transform: scale(0.92);
 }
 
 .processNode svg {
@@ -923,46 +900,70 @@
 }
 
 .processReady:not(.processVisible) .processStep {
-  opacity: 0;
-  transform: translateY(1.6rem);
-}
-
-.processReady:not(.processVisible) .processLine {
-  transform: scaleX(0);
-  opacity: 0;
+  opacity: 0.28;
 }
 
 .processVisible .processStep {
-  animation: processStepIn 0.62s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(var(--step, 0) * 0.2s);
+  opacity: 0.28;
+  animation: processStepCycle var(--process-cycle) linear infinite;
+  animation-delay: calc(var(--step, 0) * var(--process-cycle) / 6);
 }
 
-.processVisible .processLine {
-  animation: processLineIn 1.05s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: 0.12s;
+.processVisible .processNode {
+  animation: processNodeCycle var(--process-cycle) linear infinite;
+  animation-delay: calc(var(--step, 0) * var(--process-cycle) / 6);
 }
 
-@keyframes processStepIn {
-  from {
-    opacity: 0;
-    transform: translateY(1.6rem);
-  }
+.processStep:hover {
+  opacity: 1;
+  filter: none;
+  z-index: 2;
+}
 
-  to {
+.processStep:hover .processNode {
+  transform: scale(1.08);
+  border-color: var(--gold);
+  box-shadow:
+    0 0 0 7px var(--bg),
+    0 0 0 11px color-mix(in srgb, var(--gold) 80%, transparent),
+    0 0 38px var(--ring-glow);
+}
+
+@keyframes processStepCycle {
+  0%,
+  12% {
     opacity: 1;
-    transform: none;
+    filter: none;
+  }
+
+  16.66%,
+  100% {
+    opacity: 0.28;
+    filter: saturate(0.55);
   }
 }
 
-@keyframes processLineIn {
-  from {
-    opacity: 0;
-    transform: scaleX(0);
+@keyframes processNodeCycle {
+  0%,
+  12% {
+    transform: scale(1.08);
+    border-color: var(--gold);
+    color: var(--gold);
+    box-shadow:
+      0 0 0 7px var(--bg),
+      0 0 0 11px color-mix(in srgb, var(--gold) 80%, transparent),
+      0 0 40px var(--ring-glow);
   }
 
-  to {
-    opacity: 1;
-    transform: scaleX(1);
+  16.66%,
+  100% {
+    transform: scale(0.92);
+    border-color: color-mix(in srgb, var(--gold) 35%, transparent);
+    color: color-mix(in srgb, var(--gold) 55%, var(--text-muted));
+    box-shadow:
+      0 0 0 7px var(--bg),
+      0 0 0 8px color-mix(in srgb, var(--gold) 18%, transparent),
+      0 0 8px transparent;
   }
 }
 
@@ -970,9 +971,11 @@
   .processReady:not(.processVisible) .processStep,
   .processReady:not(.processVisible) .processLine,
   .processVisible .processStep,
-  .processVisible .processLine {
+  .processVisible .processLine,
+  .processVisible .processNode {
     opacity: 1;
     transform: none;
+    filter: none;
     animation: none;
   }
 }
@@ -1013,6 +1016,25 @@
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.projectThumb[data-photo="true"]::before {
+  display: none;
+}
+
+.projectThumbImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+.projectThumbImg[data-on="true"] {
+  opacity: 1;
 }
 
 .projectThumb span {
@@ -1097,7 +1119,7 @@
 .coverStage {
   position: relative;
   grid-column: 2;
-  height: calc(min(38rem, 68vw) * 490 / 1024 + 5.6rem);
+  height: calc(min(38rem, 68vw) * 490 / 1024 + 7.8rem);
   perspective: 1800px;
   perspective-origin: 50% 48%;
   overflow: hidden;
@@ -1117,7 +1139,7 @@
   display: flex;
   flex-direction: column;
   width: min(38rem, 68vw);
-  height: calc(min(38rem, 68vw) * 490 / 1024 + 4.15rem);
+  height: calc(min(38rem, 68vw) * 490 / 1024 + 6.35rem);
   border-radius: 1.45rem;
   overflow: hidden;
   transform-origin: center center;
@@ -1263,11 +1285,11 @@
   position: relative;
   z-index: 2;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
   flex: 0 0 auto;
-  padding: 0.85rem 1.15rem 0.95rem;
+  padding: 0.9rem 1.15rem 1.05rem;
   background: #111;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   opacity: 0.55;
@@ -1280,17 +1302,47 @@
   pointer-events: auto;
 }
 
+.coverCopy {
+  min-width: 0;
+}
+
 .coverMeta h3 {
   color: #fff;
   font-size: 1.12rem;
   font-weight: 700;
   letter-spacing: -0.03em;
-  margin-bottom: 0.15rem;
+  margin-bottom: 0.35rem;
 }
 
-.coverMeta p {
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 0.86rem;
+.coverCategory {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  z-index: 5;
+  margin: 0;
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--gold) 50%, transparent);
+  background: rgba(8, 8, 8, 0.78);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.coverBlurb {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .coverView {
@@ -1450,6 +1502,10 @@ a.coverView:hover {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .projectThumbImg {
+    transition: none;
+  }
+
   .coverCard {
     transition: opacity 0.25s ease;
     transform: translate(-50%, -50%) scale(0.92);
@@ -2485,12 +2541,12 @@ a.coverView:hover {
 
   .coverStage {
     grid-column: 1;
-    height: calc(min(34rem, 78vw) * 490 / 1024 + 5.4rem);
+    height: calc(min(34rem, 78vw) * 490 / 1024 + 7.6rem);
   }
 
   .coverCard {
     width: min(34rem, 78vw);
-    height: calc(min(34rem, 78vw) * 490 / 1024 + 4.15rem);
+    height: calc(min(34rem, 78vw) * 490 / 1024 + 6.35rem);
     border-radius: 1.25rem;
   }
 
@@ -2613,6 +2669,10 @@ a.coverView:hover {
     grid-template-columns: 1fr;
   }
 
+  .aboutPhoto {
+    transform: scale(1.06);
+  }
+
   .nav {
     top: 0;
   }
@@ -2671,7 +2731,10 @@ a.coverView:hover {
   }
 
   .navCta {
-    padding: 0.2rem;
+    min-height: 2.5rem;
+    min-width: 2.5rem;
+    padding: 0.28rem 0.5rem;
+    justify-content: center;
   }
 
   .servicesGrid,
@@ -2711,12 +2774,12 @@ a.coverView:hover {
   }
 
   .coverStage {
-    height: calc(min(24rem, 88vw) * 490 / 1024 + 5.2rem);
+    height: calc(min(24rem, 88vw) * 490 / 1024 + 7.6rem);
   }
 
   .coverCard {
     width: min(24rem, 88vw);
-    height: calc(min(24rem, 88vw) * 490 / 1024 + 4.15rem);
+    height: calc(min(24rem, 88vw) * 490 / 1024 + 6.5rem);
   }
 
   .coverMeta {

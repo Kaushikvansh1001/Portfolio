@@ -177,13 +177,18 @@ export const projects: Project[] = [
     ],
   },
   {
-    name: "Novastraa",
-    category: "Aviation Platform",
-    description:
-      "Responsive aviation platform with business enquiry workflows and backend integration.",
-    url: "https://novastraaind.in",
+    name: "Payroll Management Web App",
+    category: "HR / Payroll",
+    description: "Web-based employee and payroll management system.",
+    url: "https://raymoon.in",
     featured: true,
-    accent: "#1f8a70",
+    accent: "#d97706",
+    image: "/projects/payroll/dashboard.png",
+    images: [
+      "/projects/payroll/dashboard.png",
+      "/projects/payroll/employees.png",
+      "/projects/payroll/payroll.png",
+    ],
   },
   {
     name: "Aerotech Inventory System",
@@ -192,14 +197,42 @@ export const projects: Project[] = [
       "Inventory management system for tracking products, stock, and transactions.",
     featured: false,
     accent: "#5b6cff",
+    image: "/projects/aerotech/dashboard.png",
+    images: [
+      "/projects/aerotech/dashboard.png",
+      "/projects/aerotech/parts.png",
+      "/projects/aerotech/add-parts.png",
+    ],
   },
   {
-    name: "Payroll Management Web App",
-    category: "HR / Payroll",
-    description: "Web-based employee and payroll management system.",
-    url: "https://raymoon.in",
+    name: "Admin Panel for Raymoon Website",
+    category: "Content Management",
+    description:
+      "Admin panel to create, edit, and delete job postings and blogs shown on the Raymoon homepage.",
+    url: "https://raymoongroup.com/admin/",
     featured: false,
-    accent: "#d97706",
+    accent: "#0f766e",
+    image: "/projects/raymoon-admin/login.png",
+    images: [
+      "/projects/raymoon-admin/login.png",
+      "/projects/raymoon-admin/blogs.png",
+      "/projects/raymoon-admin/jobs.png",
+    ],
+  },
+  {
+    name: "Novastraa",
+    category: "Aviation Platform",
+    description:
+      "Responsive aviation platform with business enquiry workflows and backend integration.",
+    url: "https://novastraaind.in",
+    featured: false,
+    accent: "#1f8a70",
+    image: "/projects/novastraa/hero.png",
+    images: [
+      "/projects/novastraa/hero.png",
+      "/projects/novastraa/contact.png",
+      "/projects/novastraa/products.png",
+    ],
   },
   {
     name: "Client Email Reminder System",
@@ -226,6 +259,12 @@ export const projects: Project[] = [
     url: "https://asiagotravels.com",
     featured: true,
     accent: "#0891b2",
+    image: "/projects/asiago/hero.png",
+    images: [
+      "/projects/asiago/hero.png",
+      "/projects/asiago/packages.png",
+      "/projects/asiago/safari.png",
+    ],
   },
   {
     name: "DevNexus Solutions",
@@ -235,6 +274,12 @@ export const projects: Project[] = [
     url: "https://devnexussolutions.com",
     featured: false,
     accent: "#334155",
+    image: "/projects/devnexus/hero.png",
+    images: [
+      "/projects/devnexus/hero.png",
+      "/projects/devnexus/funnel.png",
+      "/projects/devnexus/blogs.png",
+    ],
   },
   {
     name: "A2 Travels CRM",

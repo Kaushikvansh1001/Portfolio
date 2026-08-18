@@ -138,7 +138,7 @@ export default function Home() {
               <div className={styles.aboutVisual}>
                 <div className={styles.aboutImage}>
                   <img
-                    src="/about_me_sec.png"
+                    src="/about_me_sec_new.png?v=2"
                     alt="Backend stack: Python, Flask, REST APIs, PostgreSQL, and AWS"
                     width={1536}
                     height={1024}
