@@ -17,12 +17,6 @@ export default function ContactForm() {
     setStatus("sending");
     setError("");
 
-    if (data.get("company")) {
-      form.reset();
-      setStatus("sent");
-      return;
-    }
-
     if (!ACCESS_KEY) {
       setStatus("error");
       setError("Contact form is not configured yet.");
@@ -42,6 +36,8 @@ export default function ContactForm() {
           email: data.get("email"),
           message: data.get("message"),
           subject: `Portfolio message from ${data.get("name")}`,
+          from_name: "Portfolio Contact",
+          botcheck: Boolean(data.get("botcheck")),
         }),
       });
 
@@ -64,8 +60,8 @@ export default function ContactForm() {
   return (
     <form className={styles.contactForm} onSubmit={onSubmit}>
       <input
-        type="text"
-        name="company"
+        type="checkbox"
+        name="botcheck"
         tabIndex={-1}
         autoComplete="off"
         className={styles.contactHoneypot}
