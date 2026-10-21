@@ -260,7 +260,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className={`${styles.section} ${styles.sectionAlt}`} id="skills">
+        <section className={`${styles.section} ${styles.sectionAlt} ${styles.skillsSection}`} id="skills">
           <div className="container">
             <TechStack />
 
@@ -382,9 +382,7 @@ export default function Home() {
         </section>
 
         <footer className={styles.footer}>
-          <p>
-            © {new Date().getFullYear()} {profile.name}. All rights reserved.
-          </p>
+          <p>Designed and built from scratch in 2026.</p>
         </footer>
       </main>
     </>

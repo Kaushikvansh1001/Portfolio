@@ -1,54 +1,121 @@
 .nav {
-  position: absolute;
-  top: 0;
+  position: fixed;
+  top: 1.05rem;
   left: 0;
   right: 0;
   z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
   background: transparent;
-  border-bottom: 1px solid transparent;
+  border: none;
   animation: fadeIn 0.8s ease both;
   font-family: var(--font-sans);
 }
 
-.navScrolled {
-  position: fixed;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background: var(--nav-bg);
-  border-bottom-color: var(--border);
-}
-
+.navScrolled,
 .navOpen {
-  background: var(--nav-bg);
+  background: transparent;
+  border: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .navBar {
+  pointer-events: auto;
   position: relative;
-  width: min(100% - 2.4rem, 1280px);
+  width: max-content;
+  max-width: calc(100vw - 1.5rem);
+  min-height: 3.35rem;
   margin-inline: auto;
-  min-height: 4.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 1rem;
-}
-
-.navLinks {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  padding: 0.32rem 0.4rem 0.32rem 0.38rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(1.2rem, 2.4vw, 2.15rem);
-  font-size: 0.95rem;
-  font-weight: 500;
+  gap: 1.15rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  transition:
+    gap 0.4s ease,
+    padding 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+[data-theme="light"] .navBar {
+  background: rgba(255, 255, 255, 0.42);
+  border-color: rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 10px 30px rgba(20, 20, 20, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.navScrolled .navBar {
+  gap: 0.55rem;
+  padding: 0.28rem 0.34rem 0.28rem 0.3rem;
+}
+
+.navBrand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-shrink: 0;
+  padding-left: 0.12rem;
   color: var(--text);
 }
 
+.navAvatar {
+  width: 2.05rem;
+  height: 2.05rem;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #1a1a1a;
+}
+
+.navAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 18%;
+}
+
+.navName {
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.navLinks {
+  position: static;
+  left: auto;
+  transform: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.15rem;
+  overflow: hidden;
+  max-width: 36rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--text);
+  transition:
+    max-width 0.4s ease,
+    opacity 0.25s ease,
+    margin 0.4s ease;
+}
+
 .navLinks a {
+  white-space: nowrap;
   transition: color 0.2s ease, opacity 0.2s ease;
-  opacity: 0.82;
+  opacity: 0.78;
 }
 
 .navLinks a:hover,
@@ -57,53 +124,79 @@
   color: var(--text);
 }
 
+.navScrolled .navLinks {
+  max-width: 0;
+  opacity: 0;
+  margin: 0;
+  pointer-events: none;
+}
+
 .navEnd {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.7rem;
+  gap: 0.45rem;
   z-index: 1;
+  flex-shrink: 0;
 }
 
 .themeBtn {
-  width: 2.35rem;
-  height: 2.35rem;
+  width: 2.05rem;
+  height: 2.05rem;
   border-radius: 999px;
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--bg-elevated) 70%, transparent);
+  border: none;
+  background: transparent;
   color: var(--text);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
 .themeBtn svg {
-  width: 1.05rem;
-  height: 1.05rem;
+  width: 1.02rem;
+  height: 1.02rem;
 }
 
 .themeBtn:hover {
-  border-color: color-mix(in srgb, var(--text) 28%, var(--border));
-  transform: translateY(-1px);
+  transform: none;
+  background: color-mix(in srgb, var(--text) 8%, transparent);
 }
 
 .navCta {
   display: inline-flex;
   align-items: center;
   gap: 0.15rem;
-  min-height: 2.55rem;
-  padding: 0.18rem 0.55rem 0.18rem 0.18rem;
+  min-height: 2.3rem;
+  max-width: 12.5rem;
+  overflow: hidden;
+  padding: 0.16rem 0.45rem 0.16rem 0.16rem;
   border: none;
   border-radius: 999px;
   background: #2a2a2a;
   color: #fff;
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0;
   text-transform: none;
-  transition: transform 0.2s ease, background 0.2s ease;
+  white-space: nowrap;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    max-width 0.4s ease,
+    opacity 0.25s ease,
+    padding 0.4s ease,
+    margin 0.4s ease;
+}
+
+.navScrolled .navCta {
+  max-width: 0;
+  opacity: 0;
+  padding-left: 0;
+  padding-right: 0;
+  margin: 0;
+  pointer-events: none;
 }
 
 .navCta:hover {
@@ -120,8 +213,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 2.2rem;
-  padding: 0.4rem 1.15rem;
+  min-height: 1.85rem;
+  padding: 0.22rem 0.85rem;
   border-radius: 999px;
   background: #141414;
   color: #fff;
@@ -165,6 +258,7 @@
 
 .navMobile {
   display: none;
+  pointer-events: auto;
 }
 
 .hero {
@@ -1946,210 +2040,181 @@ a.coverView:hover {
   }
 }
 
-.techStack {
-  width: 100%;
-  display: grid;
-  grid-template-columns: minmax(16rem, 0.86fr) minmax(0, 1.2fr);
-  gap: clamp(1.8rem, 4vw, 3.4rem);
-  align-items: center;
+.skillsSection {
+  padding-top: clamp(2.4rem, 5vw, 3.4rem);
+  padding-bottom: clamp(2.4rem, 5vw, 3.4rem);
 }
 
-.techIntro .sectionTitle {
-  max-width: 16ch;
+.techStack {
+  width: 100%;
+}
+
+.techHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.8rem 2rem;
+  margin-bottom: 1.6rem;
+}
+
+.techTitle {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 3.6vw, 2.7rem);
+  font-weight: 700;
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+}
+
+.techTitle span {
+  display: block;
+  color: color-mix(in srgb, var(--text) 58%, transparent);
 }
 
 .techLead {
+  max-width: 18rem;
   color: var(--text-muted);
-  margin-top: 1rem;
-  max-width: 34rem;
-  line-height: 1.7;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  text-align: right;
 }
 
-.techTabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-  margin-top: 1.6rem;
+.techBoard {
+  display: grid;
+  gap: 0.85rem;
 }
 
-.techTab {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.52rem 0.95rem;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--bg-elevated);
-  color: var(--text);
-  cursor: pointer;
-  font-size: 0.82rem;
-  font-weight: 600;
-  line-height: 1;
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease;
-}
-
-.techTab svg {
-  width: 0.95rem;
-  height: 0.95rem;
-  flex-shrink: 0;
-}
-
-.techTab:hover {
-  border-color: color-mix(in srgb, var(--gold) 45%, var(--border));
-}
-
-.techTabActive {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: #fff;
-}
-
-.techTabActive:hover {
-  border-color: var(--gold);
-}
-
-.techGrid {
+.techSides {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.15rem;
-  overflow: visible;
+  gap: 0.85rem;
 }
 
-.techCard {
-  position: relative;
-  isolation: isolate;
-  aspect-ratio: 1;
-  background: transparent;
-  overflow: visible;
+.techPanel {
+  min-width: 0;
+  padding: 1.15rem 1.2rem 1.3rem;
+  border-radius: 1.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.techCard::before {
-  content: "";
-  position: absolute;
-  inset: -6%;
-  z-index: 0;
-  border-radius: 2rem;
-  background: radial-gradient(
-    circle at 50% 48%,
-    color-mix(in srgb, var(--gold) 18%, transparent) 0%,
-    transparent 68%
-  );
-  filter: blur(12px);
-  pointer-events: none;
+.techPanelWide {
+  padding: 1.25rem 1.35rem 1.45rem;
 }
 
-.techCardPlay {
-  animation: techCardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+.techPanelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.05rem;
 }
 
-.techRing {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  overflow: visible;
-  filter: drop-shadow(0 0 8px var(--ring-glow));
+.techPanelHead h3 {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
-.techRingFace {
-  fill: var(--bg-card);
-  stroke: none;
+.techPanelHead span {
+  color: color-mix(in srgb, var(--gold) 78%, #fff);
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
 }
 
-.techRingTrack,
-.techRingFill {
-  fill: none;
-  stroke-width: 6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.techIconsWide {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.55rem 0.4rem;
 }
 
-.techRingTrack {
-  stroke: color-mix(in srgb, var(--gold) 32%, #2b2b2b);
+.techIcons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.85rem 0.35rem;
 }
 
-.techRingFill {
-  stroke: var(--gold);
-  filter: drop-shadow(0 0 6px var(--ring-glow));
-}
-
-.techCardInner {
-  position: absolute;
-  inset: 12%;
-  z-index: 2;
+.techIcon {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   text-align: center;
-  gap: 0.45rem;
 }
 
-.techLogo {
-  width: 2.55rem;
-  height: 2.55rem;
+.techIconMark {
+  width: 4.4rem;
+  height: 4.4rem;
   display: grid;
   place-items: center;
-  color: var(--text);
+  filter: drop-shadow(0 12px 16px rgba(0, 0, 0, 0.38));
+  transition:
+    transform 0.22s ease,
+    filter 0.22s ease;
 }
 
-.techLogo svg,
-.techLogo img {
+.techPanelWide .techIconMark {
+  width: 4.7rem;
+  height: 4.7rem;
+}
+
+.techIconMark img,
+.techIconMark svg {
   width: 100%;
   height: 100%;
   object-fit: contain;
-}
-
-.techLogoInk {
-  filter: invert(1);
-}
-
-[data-theme="light"] .techLogoInk {
-  filter: none;
-}
-
-[data-theme="light"] .techLogoOnDark {
-  filter: invert(1) hue-rotate(180deg);
 }
 
 .techLogoBadge {
   border-radius: 0.28rem;
 }
 
-.techName {
-  font-size: 0.92rem;
-  font-weight: 700;
-  color: var(--text);
+.techIcon strong {
+  display: block;
+  margin-top: 0.48rem;
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   line-height: 1.2;
 }
 
-.techLevel {
-  color: var(--gold);
-  font-size: 0.95rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
+.techIcon:hover .techIconMark {
+  transform: translateY(-5px) scale(1.06);
+  filter: drop-shadow(0 14px 20px color-mix(in srgb, var(--gold) 38%, transparent));
 }
 
-@keyframes techCardIn {
-  from {
-    opacity: 0;
-    transform: translateY(0.8rem) scale(0.98);
-  }
+[data-theme="light"] .techPanel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.58));
+  border-color: rgba(20, 20, 20, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
 
-  to {
-    opacity: 1;
+[data-theme="light"] .techIconMark {
+  filter: drop-shadow(0 10px 14px rgba(20, 20, 20, 0.12));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .techIconMark,
+  .techIcon:hover .techIconMark {
+    transition: none;
     transform: none;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .techCardPlay {
-    animation: none;
+@media (max-width: 900px) {
+  .techSides {
+    grid-template-columns: 1fr;
+  }
+
+  .techIconsWide {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
@@ -2402,8 +2467,10 @@ a.coverView:hover {
 }
 
 .footer {
-  padding: 1.5rem 1.2rem 2rem;
-  text-align: center;
+  width: min(100% - 2.5rem, var(--max));
+  margin-inline: auto;
+  padding: 1.5rem 0 2rem;
+  text-align: right;
   color: var(--text-muted);
   font-size: 0.85rem;
   border-top: 1px solid var(--border);
@@ -2477,6 +2544,9 @@ a.coverView:hover {
   }
 
   .nav,
+  .navBar,
+  .navLinks,
+  .navCta,
   .heroWord,
   .heroPhoto,
   .heroRoles,
@@ -2488,6 +2558,7 @@ a.coverView:hover {
   .heroWorldwide,
   .heroStat {
     animation: none;
+    transition: none;
   }
 }
 
@@ -2497,17 +2568,18 @@ a.coverView:hover {
     --nav-notch: 1.9rem;
   }
 
-  .techStack {
-    grid-template-columns: 1fr;
+  .techHead {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .techIntro .sectionTitle {
-    max-width: none;
+  .techLead {
+    text-align: left;
+    max-width: 28rem;
   }
 
   .servicesGrid,
-  .projectGrid,
-  .techGrid {
+  .projectGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -2699,29 +2771,48 @@ a.coverView:hover {
   }
 
   .nav {
-    top: 0;
+    top: 0.75rem;
   }
 
   .navBar {
-    min-height: 4.1rem;
+    min-height: 3.15rem;
+    width: max-content;
+    gap: 0.55rem;
   }
 
-  .navLinks {
+  .navLinks,
+  .navCta {
     display: none;
   }
 
   .menuBtn {
     display: inline-flex;
+    width: 2.05rem;
+    height: 2.05rem;
+    border-radius: 999px;
+    background: transparent;
   }
 
   .navMobile {
     display: none;
-    width: min(100% - 2.4rem, 1280px);
-    margin: 0 auto;
-    padding: 0.4rem 0 1rem;
+    width: min(18.5rem, calc(100vw - 1.5rem));
+    margin: 0.55rem auto 0;
+    padding: 0.65rem 0.85rem;
     flex-direction: column;
-    gap: 0.15rem;
-    border-bottom: 1px solid var(--border);
+    gap: 0.1rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 1.15rem;
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow:
+      0 12px 36px rgba(0, 0, 0, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+  }
+
+  [data-theme="light"] .navMobile {
+    background: rgba(255, 255, 255, 0.42);
+    border-color: rgba(255, 255, 255, 0.55);
   }
 
   .navOpen .navMobile {
@@ -2730,7 +2821,7 @@ a.coverView:hover {
 
   .navMobile a {
     color: var(--text);
-    padding: 0.7rem 0.15rem;
+    padding: 0.7rem 0.35rem;
     font-weight: 500;
   }
 
@@ -2741,9 +2832,9 @@ a.coverView:hover {
 
 @media (max-width: 640px) {
   .navBar {
-    width: min(100% - 1.5rem, 1280px);
-    min-height: 3.7rem;
-    gap: 0.55rem;
+    width: max-content;
+    min-height: 3.05rem;
+    gap: 0.4rem;
   }
 
   .heroPhoto {
@@ -2800,22 +2891,18 @@ a.coverView:hover {
     grid-template-columns: 1fr;
   }
 
-  .techGrid {
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
+  .techIconsWide {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .techPanelWide .techIconMark,
+  .techIconMark {
+    width: 3.8rem;
+    height: 3.8rem;
   }
 
   .eduGrid {
     grid-template-columns: 1fr;
-  }
-
-  .techTabs {
-    gap: 0.5rem;
-  }
-
-  .techTab {
-    padding: 0.52rem 0.9rem;
-    font-size: 0.82rem;
   }
 
   .processSteps {
