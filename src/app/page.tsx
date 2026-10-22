@@ -7,18 +7,11 @@ import ProcessReveal from "@/components/ProcessReveal";
 import ProjectShowcase from "@/components/ProjectShowcase";
 import TechStack from "@/components/TechStack";
 import ServicesShowcase from "@/components/ServicesShowcase";
-import ContactForm from "@/components/ContactForm";
+import ContactStage from "@/components/ContactStage";
 import IntroScreen from "@/components/IntroScreen";
 import SocialIcon from "@/components/SocialIcon";
 import {
-  IconArrowUpRight,
-  IconBehance,
   IconCheck,
-  IconGithub,
-  IconLinkedin,
-  IconMail,
-  IconPhone,
-  IconPin,
   IconPulse,
   ProcessIcon,
 } from "@/components/Icons";
@@ -48,10 +41,6 @@ export default function Home() {
         <HeroScroll>
           <div className={styles.heroFrame}>
             <div className={styles.heroGlow} aria-hidden="true" />
-            <p className={styles.heroWord} aria-hidden="true">
-              PORTFOLIO
-            </p>
-
             <div className={styles.heroPhoto}>
               <Image
                 src={profile.heroPhoto}
@@ -74,33 +63,20 @@ export default function Home() {
                 </p>
                 <p className={styles.heroBio}>{profile.heroBio}</p>
                 <div className={styles.heroSocials}>
-                  <a
-                    href={profile.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="LinkedIn"
-                  >
-                    <IconLinkedin />
-                  </a>
-                  <a
-                    href={profile.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="GitHub"
-                  >
-                    <IconGithub />
-                  </a>
-                  <a
-                    href={profile.behance}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Behance"
-                  >
-                    <IconBehance />
-                  </a>
-                  <a href={`mailto:${profile.email}`} aria-label="Email">
-                    <IconMail />
-                  </a>
+                  {socials.map((item) =>
+                    item.href ? (
+                      <a
+                        href={item.href}
+                        key={item.id}
+                        {...(item.href.startsWith("http")
+                          ? { target: "_blank", rel: "noopener noreferrer" }
+                          : {})}
+                        aria-label={item.name}
+                      >
+                        <SocialIcon id={item.id} name={item.name} />
+                      </a>
+                    ) : null,
+                  )}
                 </div>
               </div>
 
@@ -139,7 +115,7 @@ export default function Home() {
               <div className={styles.aboutVisual}>
                 <div className={styles.aboutImage}>
                   <img
-                    src="/about_me_sec_new.png?v=2"
+                    src="/about_me.png"
                     alt="Backend stack: Python, Flask, REST APIs, PostgreSQL, and AWS"
                     width={1536}
                     height={1024}
@@ -260,69 +236,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className={`${styles.section} ${styles.contactSection}`} id="contact">
-          <div className="container">
-            <div className={styles.contactGrid}>
-              <div className={styles.contactInfo}>
-                <p className={styles.contactBadge}>Contact</p>
-                <h2 className={styles.sectionTitle}>Get in touch</h2>
-                <p className={styles.contactIntro}>
-                  Have a project in mind, or want to talk about a backend role
-                  or freelance build?
-                </p>
-
-                <div className={styles.contactCards}>
-                  <a className={styles.contactCard} href={`mailto:${profile.email}`}>
-                    <span className={styles.contactCardIcon}>
-                      <IconMail />
-                    </span>
-                    <span>
-                      <strong>Email me</strong>
-                      <em>{profile.email}</em>
-                    </span>
-                    <span className={styles.contactCardGo}>
-                      <IconArrowUpRight />
-                    </span>
-                  </a>
-                  <a
-                    className={styles.contactCard}
-                    href={`tel:${profile.phone.replace(/\s/g, "")}`}
-                  >
-                    <span className={styles.contactCardIcon}>
-                      <IconPhone />
-                    </span>
-                    <span>
-                      <strong>Call me</strong>
-                      <em>{profile.phone}</em>
-                    </span>
-                    <span className={styles.contactCardGo}>
-                      <IconArrowUpRight />
-                    </span>
-                  </a>
-                  <a
-                    className={styles.contactCard}
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(profile.location)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span className={styles.contactCardIcon}>
-                      <IconPin />
-                    </span>
-                    <span>
-                      <strong>My location</strong>
-                      <em>{profile.location}</em>
-                    </span>
-                    <span className={styles.contactCardGo}>
-                      <IconArrowUpRight />
-                    </span>
-                  </a>
-                </div>
-              </div>
-
-              <ContactForm />
-            </div>
-          </div>
-        </section>
+        <ContactStage />
 
         <section className={`${styles.section} ${styles.sectionAlt}`} id="social">
           <div className={`container ${styles.socialRow}`}>

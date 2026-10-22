@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { IconArrow, IconCheck } from "@/components/Icons";
 import styles from "@/app/page.module.css";
 
 const ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
@@ -57,8 +58,27 @@ export default function ContactForm() {
     }
   }
 
+  if (status === "sent") {
+    return (
+      <div className={styles.contactForm}>
+        <div className={styles.contactDone}>
+          <span className={styles.contactDoneIcon} aria-hidden="true">
+            <IconCheck />
+          </span>
+          <h4>Message sent</h4>
+          <p>I&apos;ll get back to you soon.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <form className={styles.contactForm} onSubmit={onSubmit}>
+      <div className={styles.contactFormHead}>
+        <p className={styles.kicker}>Contact</p>
+        <h3 id="talk-dialog-title">Get in touch</h3>
+      </div>
+
       <input
         type="checkbox"
         name="botcheck"
@@ -67,39 +87,57 @@ export default function ContactForm() {
         className={styles.contactHoneypot}
         aria-hidden="true"
       />
-      <input
-        className={styles.contactInput}
-        type="text"
-        name="name"
-        placeholder="Name"
-        required
-        minLength={2}
-        autoComplete="name"
-      />
-      <input
-        className={styles.contactInput}
-        type="email"
-        name="email"
-        placeholder="Email"
-        required
-        autoComplete="email"
-      />
-      <textarea
-        className={`${styles.contactInput} ${styles.contactTextarea}`}
-        name="message"
-        placeholder="Message"
-        required
-        minLength={10}
-        rows={6}
-      />
-      <button className={styles.contactSubmit} type="submit" disabled={status === "sending"}>
-        {status === "sending" ? "Sending..." : "Submit"}
+
+      <div className={styles.contactSheet}>
+        <label className={styles.contactField}>
+          <span>Name</span>
+          <input
+            className={styles.contactInput}
+            type="text"
+            name="name"
+            placeholder=" "
+            required
+            minLength={2}
+            autoComplete="name"
+          />
+        </label>
+        <label className={styles.contactField}>
+          <span>Email</span>
+          <input
+            className={styles.contactInput}
+            type="email"
+            name="email"
+            placeholder=" "
+            required
+            autoComplete="email"
+          />
+        </label>
+        <label className={styles.contactField}>
+          <span>Message</span>
+          <textarea
+            className={`${styles.contactInput} ${styles.contactTextarea}`}
+            name="message"
+            placeholder=" "
+            required
+            minLength={10}
+            rows={5}
+          />
+        </label>
+      </div>
+
+      <button
+        className={styles.contactSubmit}
+        type="submit"
+        disabled={status === "sending"}
+      >
+        {status === "sending" ? "Sending" : "Send"}
+        <IconArrow />
       </button>
-      {status === "sent" ? (
-        <p className={styles.contactStatus}>Message sent. I’ll get back to you soon.</p>
-      ) : null}
+
       {status === "error" ? (
-        <p className={`${styles.contactStatus} ${styles.contactStatusError}`}>{error}</p>
+        <p className={`${styles.contactStatus} ${styles.contactStatusError}`}>
+          {error}
+        </p>
       ) : null}
     </form>
   );

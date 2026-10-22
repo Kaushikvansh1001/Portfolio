@@ -491,29 +491,23 @@
 .heroSocials a {
   display: grid;
   place-items: center;
-  width: 2.55rem;
-  height: 2.55rem;
+  width: 3.15rem;
+  height: 3.15rem;
+  overflow: hidden;
+  border: 0;
   border-radius: 50%;
-  border: 1px solid color-mix(in srgb, var(--text) 22%, transparent);
-  color: var(--text);
   background: transparent;
-  transition:
-    color 0.2s ease,
-    border-color 0.2s ease,
-    background 0.2s ease,
-    transform 0.2s ease;
+  line-height: 0;
+  transition: transform 0.25s ease;
 }
 
 .heroSocials a:hover {
-  color: var(--gold);
-  border-color: var(--gold);
-  background: color-mix(in srgb, var(--gold) 10%, transparent);
-  transform: translateY(-3px);
+  transform: translateY(-6px) scale(1.06);
 }
 
-.heroSocials svg {
-  width: 1.08rem;
-  height: 1.08rem;
+.heroSocials .socialImg {
+  width: 3.15rem;
+  height: 3.15rem;
 }
 
 .heroActions {
@@ -782,11 +776,13 @@
 
 .aboutVisual {
   position: relative;
-  margin-right: -0.4rem;
+  display: grid;
+  justify-items: center;
 }
 
 .aboutImage {
   position: relative;
+  width: min(100%, 40rem);
   background: transparent;
 }
 
@@ -794,9 +790,6 @@
   display: block;
   width: 100%;
   height: auto;
-  max-width: none;
-  transform: scale(1.12);
-  transform-origin: center center;
 }
 
 .servicesSection {
@@ -2741,6 +2734,212 @@ a.coverView:hover {
   overflow: hidden;
 }
 
+.talkSection {
+  background: #08090c;
+}
+
+[data-theme="light"] .talkSection {
+  background: #f4f6f9;
+}
+
+.talkStage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: min(92vh, 54rem);
+  padding: 7.5rem 1.5rem 6rem;
+  text-align: center;
+  overflow: hidden;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .talkStage {
+    cursor: none;
+  }
+}
+
+.talkNote {
+  position: relative;
+  z-index: 2;
+  margin: 0 0 1.6rem;
+  color: #8b95a7;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.talkTitle {
+  position: relative;
+  z-index: 2;
+  max-width: 18ch;
+  margin: 0;
+  color: #f3f5f8;
+  font-family: var(--font-heading);
+  font-size: clamp(2.8rem, 8vw, 5.6rem);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 0.96;
+}
+
+.talkTitle span {
+  display: block;
+}
+
+[data-theme="light"] .talkTitle {
+  color: #14181f;
+}
+
+.talkGhost {
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  z-index: 0;
+  margin: 0;
+  color: rgba(243, 245, 248, 0.055);
+  font-family: var(--font-heading);
+  font-size: clamp(4.8rem, 18vw, 12.5rem);
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  line-height: 0.8;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+[data-theme="light"] .talkGhost {
+  color: rgba(20, 24, 32, 0.06);
+}
+
+.talkSlot {
+  width: 9.25rem;
+  height: 9.25rem;
+  margin-top: 3.4rem;
+}
+
+.talkOrb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  width: 9.25rem;
+  height: 9.25rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #fff;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  box-shadow:
+    0 18px 40px rgba(79, 140, 255, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  cursor: none;
+  opacity: 0;
+  will-change: transform;
+}
+
+.talkOrb[data-ready="true"] {
+  opacity: 1;
+}
+
+.talkOrb:hover,
+.talkOrb:focus-visible {
+  background: var(--gold-deep);
+}
+
+.talkOrb[hidden] {
+  display: none;
+}
+
+.talkModal {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+}
+
+.talkBackdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(6, 8, 12, 0.72);
+  backdrop-filter: blur(16px);
+  cursor: pointer;
+}
+
+.talkPanel {
+  position: relative;
+  z-index: 1;
+  width: min(28.5rem, 100%);
+  max-height: min(90vh, 48rem);
+  overflow: auto;
+  padding: 2rem 1.6rem 1.6rem;
+  border-radius: 1.75rem;
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 0%, color-mix(in srgb, var(--gold) 14%, transparent), transparent 60%),
+    #101318;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="light"] .talkPanel {
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 0%, color-mix(in srgb, var(--gold) 10%, transparent), transparent 60%),
+    #fff;
+}
+
+.talkPanel .contactForm {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.talkClose {
+  position: absolute;
+  top: 1.05rem;
+  right: 1.05rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.talkClose svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.talkClose:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .talkStage,
+  .talkOrb {
+    cursor: auto;
+  }
+}
+
 .contactSection::before {
   content: "";
   position: absolute;
@@ -2858,14 +3057,59 @@ a.coverView:hover {
 .contactForm {
   position: relative;
   display: grid;
-  gap: 0.85rem;
-  padding: clamp(1.3rem, 3vw, 1.8rem);
-  border-radius: 1.35rem;
-  background: var(--glass);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
+  gap: 1.35rem;
+}
+
+.contactFormHead {
+  display: grid;
+  gap: 0.45rem;
+  padding-right: 2rem;
+}
+
+.contactFormHead .kicker {
+  margin: 0;
+}
+
+.contactFormHead h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(1.7rem, 4vw, 2.1rem);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.1;
+}
+
+.contactSheet {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.contactField {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.contactField:focus-within {
+  border-color: color-mix(in srgb, var(--gold) 55%, transparent);
+  background: color-mix(in srgb, var(--gold) 8%, rgba(255, 255, 255, 0.03));
+  box-shadow: 0 0 0 3px var(--gold-soft);
+}
+
+.contactField span {
+  position: absolute;
+  left: 1.05rem;
+  top: 1.05rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  pointer-events: none;
+  transition:
+    transform 0.18s ease,
+    color 0.18s ease,
+    font-size 0.18s ease;
 }
 
 .contactHoneypot {
@@ -2878,53 +3122,70 @@ a.coverView:hover {
 
 .contactInput {
   width: 100%;
-  min-height: 3.15rem;
-  padding: 0.85rem 1rem;
-  border-radius: 0.95rem;
-  border: 1px solid var(--border);
-  background: var(--glass);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  min-height: 3.45rem;
+  padding: 1.35rem 1.05rem 0.55rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: var(--text);
   font: inherit;
   outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.contactInput::placeholder {
-  color: var(--text-muted);
 }
 
 .contactInput:focus {
-  border-color: color-mix(in srgb, var(--gold) 55%, var(--border));
+  background: color-mix(in srgb, var(--gold) 6%, transparent);
+}
+
+.contactField:focus-within span,
+.contactField:has(:not(:placeholder-shown)) span {
+  top: 0.42rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
 }
 
 .contactTextarea {
-  min-height: 10.5rem;
-  resize: vertical;
+  min-height: 8.4rem;
+  padding-top: 1.55rem;
+  resize: none;
 }
 
 .contactSubmit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   min-height: 3.15rem;
   border: 0;
   border-radius: 999px;
-  background: var(--text);
-  color: var(--bg);
+  background: #f3f5f8;
+  color: #101318;
   font: inherit;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
+.contactSubmit svg {
+  width: 1rem;
+  height: 1rem;
+}
+
 .contactSubmit:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .contactSubmit:disabled {
-  opacity: 0.65;
+  opacity: 0.6;
   cursor: wait;
   transform: none;
+}
+
+[data-theme="light"] .contactSubmit {
+  background: #14181f;
+  color: #fff;
 }
 
 .contactStatus {
@@ -2935,7 +3196,42 @@ a.coverView:hover {
 }
 
 .contactStatusError {
-  color: var(--gold);
+  color: #ff8b8b;
+}
+
+.contactDone {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 0.65rem;
+  min-height: 16rem;
+  text-align: center;
+}
+
+.contactDoneIcon {
+  display: grid;
+  place-items: center;
+  width: 3.1rem;
+  height: 3.1rem;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #fff;
+}
+
+.contactDoneIcon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.contactDone h4 {
+  margin: 0.2rem 0 0;
+  font-size: 1.35rem;
+  letter-spacing: -0.03em;
+}
+
+.contactDone p {
+  margin: 0;
+  color: var(--text-muted);
 }
 
 .socialRow {
@@ -3298,8 +3594,8 @@ a.coverView:hover {
     grid-template-columns: 1fr;
   }
 
-  .aboutPhoto {
-    transform: scale(1.06);
+  .aboutImage {
+    width: min(100%, 28rem);
   }
 
   .nav {
@@ -3360,6 +3656,21 @@ a.coverView:hover {
   .contactGrid {
     grid-template-columns: 1fr;
   }
+
+  .talkStage {
+    min-height: auto;
+    padding: 6.2rem 1.15rem 4.5rem;
+  }
+
+  .talkSlot,
+  .talkOrb {
+    width: 7.4rem;
+    height: 7.4rem;
+  }
+
+  .talkPanel {
+    padding: 1.2rem 1rem 1.2rem;
+  }
 }
 
 @media (max-width: 640px) {
@@ -3391,9 +3702,10 @@ a.coverView:hover {
     font-size: 1.35rem;
   }
 
-  .heroSocials a {
-    width: 2.4rem;
-    height: 2.4rem;
+  .heroSocials a,
+  .heroSocials .socialImg {
+    width: 2.75rem;
+    height: 2.75rem;
   }
 
   .socialRow {

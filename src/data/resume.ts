@@ -37,10 +37,10 @@ export const socials = [
     href: profile.github,
   },
   {
-    id: "behance",
-    name: "Behance",
-    detail: "vanshkaushik6",
-    href: profile.behance,
+    id: "phone",
+    name: "Phone",
+    detail: profile.phone,
+    href: `tel:${profile.phone.replace(/\s/g, "")}`,
   },
   {
     id: "gmail",
