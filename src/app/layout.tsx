@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
-import { Anton, Great_Vibes, Manrope, Oswald, Poppins, Syne } from "next/font/google";
+import { Great_Vibes, Sora } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
-
-const poppins = Poppins({
-  variable: "--font-poppins",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
 
 const greatVibes = Great_Vibes({
   variable: "--font-great-vibes",
@@ -15,28 +9,10 @@ const greatVibes = Great_Vibes({
   weight: "400",
 });
 
-const oswald = Oswald({
-  variable: "--font-oswald",
+const sora = Sora({
+  variable: "--font-sora",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-const anton = Anton({
-  variable: "--font-anton",
-  subsets: ["latin"],
-  weight: "400",
-});
-
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const syne = Syne({
-  variable: "--font-syne",
-  subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -49,7 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${poppins.variable} ${greatVibes.variable} ${oswald.variable} ${anton.variable} ${manrope.variable} ${syne.variable}`}
+      className={`${greatVibes.variable} ${sora.variable}`}
       suppressHydrationWarning
     >
       <body>

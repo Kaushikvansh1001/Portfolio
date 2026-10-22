@@ -83,12 +83,6 @@ export const services = [
       "Hosting on AWS EC2 and Hostinger, plus end-to-end mobile releases on Play Store and App Store.",
     icon: "deploy",
   },
-  {
-    title: "UI / UX Collaboration",
-    description:
-      "Figma-aware development with intuitive interfaces, prototyping support, and user-focused product flows.",
-    icon: "design",
-  },
 ];
 
 export const experience = [
@@ -143,6 +137,7 @@ export type Project = {
   accent: string;
   image?: string;
   images?: string[];
+  year?: string;
 };
 
 export const projects: Project[] = [
@@ -153,6 +148,7 @@ export const projects: Project[] = [
       "Full-stack recruitment platform connecting job seekers and recruiters, with job listings, applications, and recruitment management.",
     url: "https://moonsjob.com",
     featured: true,
+    year: "2026",
     accent: "#2f6fed",
     image: "/projects/moonsjob/landing.png",
     images: [
@@ -168,6 +164,7 @@ export const projects: Project[] = [
       "Backend-driven recruitment platform with database integration and production deployment.",
     url: "https://raymoongroup.com",
     featured: true,
+    year: "2026",
     accent: "#c9a227",
     image: "/projects/raymoon/hero.png",
     images: [
@@ -182,6 +179,7 @@ export const projects: Project[] = [
     description: "Web-based employee and payroll management system.",
     url: "https://raymoon.in",
     featured: true,
+    year: "2026",
     accent: "#d97706",
     image: "/projects/payroll/dashboard.png",
     images: [
@@ -211,6 +209,7 @@ export const projects: Project[] = [
       "Admin panel to create, edit, and delete job postings and blogs shown on the Raymoon homepage.",
     url: "https://raymoongroup.com/admin/",
     featured: false,
+    year: "2026",
     accent: "#0f766e",
     image: "/projects/raymoon-admin/login.png",
     images: [
@@ -240,6 +239,7 @@ export const projects: Project[] = [
     description:
       "Flask-based application for client deadlines and automated email reminders.",
     featured: false,
+    year: "2024",
     accent: "#0ea5e9",
   },
   {
@@ -273,6 +273,7 @@ export const projects: Project[] = [
       "Digital solutions platform for web, mobile, UI/UX, CRM, blockchain, and AI services.",
     url: "https://devnexussolutions.com",
     featured: false,
+    year: "2025",
     accent: "#334155",
     image: "/projects/devnexus/hero.png",
     images: [

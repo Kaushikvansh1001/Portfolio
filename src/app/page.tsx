@@ -6,7 +6,9 @@ import ExperienceReveal from "@/components/ExperienceReveal";
 import ProcessReveal from "@/components/ProcessReveal";
 import ProjectShowcase from "@/components/ProjectShowcase";
 import TechStack from "@/components/TechStack";
+import ServicesShowcase from "@/components/ServicesShowcase";
 import ContactForm from "@/components/ContactForm";
+import IntroScreen from "@/components/IntroScreen";
 import SocialIcon from "@/components/SocialIcon";
 import {
   IconArrowUpRight,
@@ -19,7 +21,6 @@ import {
   IconPin,
   IconPulse,
   ProcessIcon,
-  ServiceIcon,
 } from "@/components/Icons";
 import {
   education,
@@ -28,7 +29,6 @@ import {
   process,
   profile,
   projects,
-  services,
   socials,
 } from "@/data/resume";
 import styles from "./page.module.css";
@@ -42,6 +42,7 @@ const heroStats = [
 export default function Home() {
   return (
     <>
+      <IntroScreen />
       <Nav />
       <main>
         <HeroScroll>
@@ -150,27 +151,9 @@ export default function Home() {
           </div>
         </section>
 
-        <section className={styles.section} id="services">
+        <section className={`${styles.section} ${styles.servicesSection}`} id="services">
           <div className="container">
-            <div className={styles.sectionHeadCenter}>
-              <p className={styles.kicker}>My Services</p>
-              <h2 className={styles.sectionTitle}>What I Do</h2>
-              <p className={styles.sectionLead}>
-                Backend systems, databases, deployments, and product-minded
-                interfaces for real-world applications.
-              </p>
-            </div>
-            <div className={styles.servicesGrid}>
-              {services.map((service) => (
-                <article className={styles.serviceCard} key={service.title}>
-                  <div className={styles.serviceIconBox}>
-                    <ServiceIcon name={service.icon} />
-                  </div>
-                  <h3>{service.title}</h3>
-                  <p>{service.description}</p>
-                </article>
-              ))}
-            </div>
+            <ServicesShowcase />
           </div>
         </section>
 
@@ -207,17 +190,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className={`${styles.section} ${styles.sectionAlt}`} id="portfolio">
-          <div className="container">
-            <div className={styles.sectionHeadCenter}>
-              <p className={styles.kicker}>Featured Projects</p>
-              <h2 className={styles.sectionTitle}>My Recent Work</h2>
-              <p className={styles.sectionLead}>
-                Live platforms and backend systems shipped with Python, Flask,
-                and production deployments.
-              </p>
-            </div>
-          </div>
+        <section className={styles.workSection} id="portfolio">
           <ProjectShowcase projects={projects} />
         </section>
 
