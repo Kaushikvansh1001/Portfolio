@@ -2,27 +2,40 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { IconArrow, IconMoon, IconSun } from "@/components/Icons";
-import { useTheme } from "@/components/ThemeProvider";
+import { IconArrow } from "@/components/Icons";
 import { profile } from "@/data/resume";
 import styles from "@/app/page.module.css";
 
 const links = [
+  { href: "#portfolio", label: "Work" },
   { href: "#about", label: "About" },
+  { href: "#services", label: "Services" },
   { href: "#experience", label: "Experience" },
 ];
 
 export default function Nav() {
-  const { theme, toggleTheme } = useTheme();
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [compact, setCompact] = useState(false);
 
   useEffect(() => {
+    let lastY = window.scrollY;
+
     const onScroll = () => {
-      const isScrolled = window.scrollY > 24;
-      setScrolled(isScrolled);
-      if (isScrolled) setOpen(false);
+      const y = window.scrollY;
+      const delta = y - lastY;
+
+      if (y < 24) {
+        setCompact(false);
+      } else if (delta > 6) {
+        setCompact(true);
+        setOpen(false);
+      } else if (delta < -6) {
+        setCompact(false);
+      }
+
+      lastY = y;
     };
+
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -30,7 +43,7 @@ export default function Nav() {
 
   return (
     <header
-      className={`${styles.nav} ${scrolled ? styles.navScrolled : ""} ${open ? styles.navOpen : ""}`}
+      className={`${styles.nav} ${compact ? styles.navScrolled : ""} ${open ? styles.navOpen : ""}`}
     >
       <div className={styles.navBar}>
         <a className={styles.navBrand} href="#home" onClick={() => setOpen(false)}>
@@ -60,16 +73,6 @@ export default function Nav() {
               <IconArrow />
             </span>
           </a>
-          <button
-            type="button"
-            className={styles.themeBtn}
-            onClick={toggleTheme}
-            aria-label={
-              theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
-            }
-          >
-            {theme === "dark" ? <IconSun /> : <IconMoon />}
-          </button>
           <button
             type="button"
             className={styles.menuBtn}

@@ -184,6 +184,73 @@ function groupByYear(projects: Project[]) {
   );
 }
 
+function posterWords(name: string) {
+  if (name.toLowerCase() === "moonsjob app") return ["moons", "job", "app"];
+  return name.toLowerCase().split(/\s+/);
+}
+
+function posterSlots(shots: string[]) {
+  if (shots.length >= 3) return [shots[0], shots[1], shots[2]];
+  if (shots.length === 2) return [shots[1], shots[0], undefined];
+  return [undefined, shots[0], undefined];
+}
+
+function WorkPoster({ project }: { project: Project }) {
+  const slots = posterSlots(projectShots(project));
+  const words = posterWords(project.name);
+
+  const stage = (
+    <div className={styles.appPoster}>
+      <h3 className={styles.appPosterType}>
+        {words.map((word) => (
+          <span key={word}>{word}</span>
+        ))}
+      </h3>
+      <div className={styles.appPosterCards}>
+        {slots.map((src, slot) => (
+          <div
+            className={styles.appPosterCard}
+            data-slot={slot}
+            data-empty={!src}
+            key={slot}
+          >
+            {src ? (
+              <Image
+                src={src}
+                alt={slot === 1 ? `${project.name} preview` : ""}
+                fill
+                sizes={slot === 1 ? "320px" : "180px"}
+                className={styles.appPosterShot}
+              />
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  return (
+    <article className={`${styles.workChapter} ${styles.workChapterPoster}`}>
+      {project.url ? (
+        <a
+          href={project.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Open ${project.name}`}
+        >
+          {stage}
+        </a>
+      ) : (
+        stage
+      )}
+      <div className={styles.appPosterCopy}>
+        <p className={styles.appPosterKicker}>{project.category}</p>
+        <p>{project.description}</p>
+      </div>
+    </article>
+  );
+}
+
 function WorkChapter({ project }: { project: Project }) {
   const ref = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
@@ -308,12 +375,16 @@ export default function ProjectShowcase({ projects }: { projects: Project[] }) {
       </header>
 
       {groupByYear(featured).map((group) => (
-        <div className={styles.workGroup} key={group.year ?? group.items[0].name}>
+        <div className={styles.workGroup} key={group.items.map((item) => item.name).join("-")}>
           <WorkYear year={group.year} />
           <div className={styles.workGroupMain}>
-            {group.items.map((project) => (
-              <WorkChapter key={project.name} project={project} />
-            ))}
+            {group.items.map((project) =>
+              project.showcase === "poster" ? (
+                <WorkPoster key={project.name} project={project} />
+              ) : (
+                <WorkChapter key={project.name} project={project} />
+              ),
+            )}
           </div>
         </div>
       ))}

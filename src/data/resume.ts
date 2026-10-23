@@ -2,8 +2,8 @@ export const profile = {
   name: "Vansh Kaushik",
   firstName: "Vansh",
   lastName: "Kaushik",
-  title: "Python Developer | Back-End Developer",
-  shortTitle: "Python & Back-End Developer",
+  title: "Software Development Engineer",
+  shortTitle: "Software Development Engineer",
   location: "Gurugram, Haryana",
   phone: "+91 97110 34055",
   email: "vanshkaushik1802@gmail.com",
@@ -66,22 +66,44 @@ export const stats = [
 
 export const services = [
   {
-    title: "Backend Development",
+    title: "Web Development",
+    label: "Web",
     description:
-      "Python, Flask, and Django services with clean architecture, REST APIs, and maintainable business logic.",
+      "Custom, responsive websites, web applications, business websites, and job portals using modern frontend and backend technologies.",
+    icon: "web",
+    image: "/services/web-dev.png",
+  },
+  {
+    title: "Backend Development & API Integration",
+    label: "Backend",
+    description:
+      "Python, Flask, REST APIs, database integration, automation, admin dashboards, and custom business logic.",
     icon: "backend",
+    image: "/services/backend-api.png",
   },
   {
-    title: "Database Systems",
+    title: "Cloud Hosting & Deployment",
+    label: "Cloud",
     description:
-      "PostgreSQL, MySQL, and MongoDB design for reliable data models, queries, and application workflows.",
-    icon: "database",
-  },
-  {
-    title: "Web & App Deployment",
-    description:
-      "Hosting on AWS EC2 and Hostinger, plus end-to-end mobile releases on Play Store and App Store.",
+      "Application deployment, server configuration, domain setup, hosting, and production deployment using AWS EC2 and Hostinger.",
     icon: "deploy",
+    image: "/services/cloud-deployment.png",
+  },
+  {
+    title: "Mobile App Development & Publishing",
+    label: "Mobile",
+    description:
+      "Mobile application development, app integrations, testing, and Google Play Store publishing.",
+    icon: "mobile",
+    image: "/services/mobile-app.png",
+  },
+  {
+    title: "Business Automation & Custom Software",
+    label: "Automation",
+    description:
+      "Custom CRM systems, inventory management, payroll applications, automated email reminders, and workflow automation.",
+    icon: "automation",
+    image: "/services/automation.png",
   },
 ];
 
@@ -138,9 +160,21 @@ export type Project = {
   image?: string;
   images?: string[];
   year?: string;
+  showcase?: "poster";
 };
 
 export const projects: Project[] = [
+  {
+    name: "MoonsJob App",
+    category: "Mobile App",
+    description:
+      "MoonsJob Android app published on the Google Play Store.",
+    featured: true,
+    year: "2026",
+    accent: "#34a853",
+    showcase: "poster",
+    image: "/projects/moonsjob-app/phone_app.png",
+  },
   {
     name: "MoonsJob",
     category: "Recruitment Platform",
@@ -219,12 +253,12 @@ export const projects: Project[] = [
     ],
   },
   {
-    name: "Novastraa",
+    name: "Raymoon Aerotech",
     category: "Aviation Platform",
     description:
       "Responsive aviation platform with business enquiry workflows and backend integration.",
-    url: "https://novastraaind.in",
-    featured: false,
+    url: "https://raymoonaerotech.com",
+    featured: true,
     accent: "#1f8a70",
     image: "/projects/novastraa/hero.png",
     images: [
@@ -241,15 +275,6 @@ export const projects: Project[] = [
     featured: false,
     year: "2024",
     accent: "#0ea5e9",
-  },
-  {
-    name: "Examon Education",
-    category: "EdTech",
-    description:
-      "Online education and competitive exam preparation platform.",
-    url: "https://examoneducation.com",
-    featured: true,
-    accent: "#7c3aed",
   },
   {
     name: "Asia Go Travels",

@@ -10,16 +10,11 @@ import ServicesShowcase from "@/components/ServicesShowcase";
 import ContactStage from "@/components/ContactStage";
 import IntroScreen from "@/components/IntroScreen";
 import SocialIcon from "@/components/SocialIcon";
-import {
-  IconCheck,
-  IconPulse,
-  ProcessIcon,
-} from "@/components/Icons";
+import { IconCheck } from "@/components/Icons";
 import {
   education,
   experience,
   highlights,
-  process,
   profile,
   projects,
   socials,
@@ -59,7 +54,7 @@ export default function Home() {
                   <span>{profile.lastName}</span>
                 </h1>
                 <p className={styles.heroTitle}>
-                  Python Developer &amp; Back-End Engineer
+                  Software Development Engineer
                 </p>
                 <p className={styles.heroBio}>{profile.heroBio}</p>
                 <div className={styles.heroSocials}>
@@ -92,6 +87,10 @@ export default function Home() {
             </div>
           </div>
         </HeroScroll>
+
+        <section className={styles.workSection} id="portfolio">
+          <ProjectShowcase projects={projects} />
+        </section>
 
         <section className={`${styles.section} ${styles.sectionAlt}`} id="about">
           <div className="container">
@@ -127,47 +126,16 @@ export default function Home() {
           </div>
         </section>
 
+        <section className={styles.section} id="process">
+          <div className="container">
+            <ProcessReveal />
+          </div>
+        </section>
+
         <section className={`${styles.section} ${styles.servicesSection}`} id="services">
           <div className="container">
             <ServicesShowcase />
           </div>
-        </section>
-
-        <section className={styles.section} id="process">
-          <div className="container">
-            <article className={styles.processCard}>
-              <div className={styles.processHead}>
-                <span className={styles.processHeadIcon} aria-hidden="true">
-                  <IconPulse />
-                </span>
-                <h2>My Work Process</h2>
-              </div>
-
-              <ProcessReveal>
-                <span className={styles.processLine} aria-hidden="true" />
-                <ol className={styles.processSteps}>
-                  {process.map((step, index) => (
-                    <li
-                      className={styles.processStep}
-                      key={step.number}
-                      style={{ "--step": index } as CSSProperties}
-                    >
-                      <div className={styles.processNode}>
-                        <ProcessIcon name={step.icon} />
-                      </div>
-                      <span className={styles.processNumber}>{step.number}</span>
-                      <h3>{step.title}</h3>
-                      <p>{step.description}</p>
-                    </li>
-                  ))}
-                </ol>
-              </ProcessReveal>
-            </article>
-          </div>
-        </section>
-
-        <section className={styles.workSection} id="portfolio">
-          <ProjectShowcase projects={projects} />
         </section>
 
         <section className={`${styles.section} ${styles.experienceSection}`} id="experience">
@@ -212,7 +180,11 @@ export default function Home() {
         <section className={`${styles.section} ${styles.sectionAlt} ${styles.skillsSection}`} id="skills">
           <div className="container">
             <TechStack />
+          </div>
+        </section>
 
+        <section className={styles.section} id="education">
+          <div className="container">
             <div className={styles.eduWrap}>
               <div className={styles.sectionHeadCenter}>
                 <p className={styles.kicker}>Education</p>
