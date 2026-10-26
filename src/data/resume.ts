@@ -169,6 +169,7 @@ export const projects: Project[] = [
     category: "Mobile App",
     description:
       "MoonsJob Android app published on the Google Play Store.",
+    url: "https://play.google.com/store/apps/details?id=com.moonsjob.app",
     featured: true,
     year: "2026",
     accent: "#34a853",

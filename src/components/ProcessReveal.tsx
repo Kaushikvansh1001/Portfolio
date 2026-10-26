@@ -1,141 +1,203 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
 import { process } from "@/data/resume";
-import { ProcessIcon } from "@/components/Icons";
+import { IconChevronLeft, IconChevronRight, ProcessIcon } from "@/components/Icons";
 import styles from "@/app/page.module.css";
 
-const HOLD = 4800;
-const PATH =
-  "M 50 120 C 140 40 180 200 230 120 S 360 40 410 120 S 540 200 590 120 S 720 40 770 120 S 900 200 950 120";
-const VIEW_W = 1000;
-const VIEW_H = 220;
+const HOLD = 5200;
+const SWIPE = 48;
 
 export default function ProcessReveal() {
   const [index, setIndex] = useState(0);
-  const [dir, setDir] = useState(1);
+  const [shift, setShift] = useState(0);
+  const [pull, setPull] = useState(0);
   const [paused, setPaused] = useState(false);
-  const [length, setLength] = useState(0);
-  const [points, setPoints] = useState<{ x: number; y: number }[]>([]);
-  const pathRef = useRef<SVGPathElement>(null);
-  const active = process[index];
-  const progress = process.length > 1 ? index / (process.length - 1) : 0;
+  const [dragging, setDragging] = useState(false);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const startX = useRef<number | null>(null);
+  const dragged = useRef(false);
+  const last = process.length - 1;
 
   const go = (next: number) => {
-    const wrapped = (next + process.length) % process.length;
-    if (wrapped === index) return;
-    const forward = (wrapped - index + process.length) % process.length;
-    setDir(forward <= process.length / 2 ? 1 : -1);
-    setIndex(wrapped);
+    setIndex(Math.max(0, Math.min(last, next)));
   };
 
   useEffect(() => {
-    const path = pathRef.current;
-    if (!path) return;
+    const viewport = viewportRef.current;
+    if (!viewport) return;
 
     const measure = () => {
-      const total = path.getTotalLength();
-      setLength(total);
-      setPoints(
-        process.map((_, itemIndex) => {
-          const point = path.getPointAtLength(
-            (itemIndex / Math.max(1, process.length - 1)) * total,
-          );
-          return { x: point.x, y: point.y };
-        }),
-      );
+      const card = viewport.querySelector<HTMLElement>("[data-card]");
+      const track = viewport.firstElementChild;
+      if (!card || !(track instanceof HTMLElement)) return;
+      const gap = Number.parseFloat(getComputedStyle(track).gap) || 0;
+      setShift(index * (card.offsetWidth + gap));
     };
 
     measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, []);
+    const observer = new ResizeObserver(measure);
+    observer.observe(viewport);
+    return () => observer.disconnect();
+  }, [index]);
 
   useEffect(() => {
-    if (paused || process.length < 2) return;
+    if (paused || dragging || process.length < 2) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const timer = window.setInterval(() => go(index + 1), HOLD);
-    return () => window.clearInterval(timer);
-  }, [paused, index]);
+    const timer = window.setInterval(() => {
+      setIndex((current) => (current >= last ? 0 : current + 1));
+    }, HOLD);
 
-  const orb = points[index] ?? { x: 50, y: 120 };
+    return () => window.clearInterval(timer);
+  }, [paused, dragging, last]);
+
+  const onKey = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      event.preventDefault();
+      go(index + 1);
+    }
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      event.preventDefault();
+      go(index - 1);
+    }
+  };
+
+  const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    startX.current = event.clientX;
+    dragged.current = false;
+    setDragging(true);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    if (startX.current == null) return;
+    const dx = event.clientX - startX.current;
+    if (Math.abs(dx) > 8) dragged.current = true;
+    setPull(dx);
+  };
+
+  const onPointerUp = () => {
+    if (startX.current == null) return;
+    const dx = pull;
+    startX.current = null;
+    setDragging(false);
+    setPull(0);
+    if (Math.abs(dx) < SWIPE) return;
+    go(dx < 0 ? index + 1 : index - 1);
+  };
+
+  const moveGlow = (event: PointerEvent<HTMLElement>) => {
+    if (window.matchMedia("(max-width: 820px)").matches) return;
+    const box = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - box.left) / box.width;
+    const y = (event.clientY - box.top) / box.height;
+    event.currentTarget.style.setProperty("--mx", `${event.clientX - box.left}px`);
+    event.currentTarget.style.setProperty("--my", `${event.clientY - box.top}px`);
+    event.currentTarget.style.setProperty("--rx", `${(0.5 - y) * 7}deg`);
+    event.currentTarget.style.setProperty("--ry", `${(x - 0.5) * 9}deg`);
+  };
 
   return (
     <div
       className={styles.processShow}
+      tabIndex={0}
+      data-paused={paused || dragging}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onKeyDown={onKey}
     >
       <div className={styles.processHead}>
-        <p className={styles.kicker}>How I Work</p>
-        <h2 className={styles.sectionTitle}>My Work Process</h2>
+        <h2 className={styles.processTitle}>How I Work</h2>
+        <div className={styles.processArrows}>
+          <button
+            type="button"
+            className={styles.processNavBtn}
+            data-kind="prev"
+            aria-label="Previous step"
+            disabled={index === 0}
+            onClick={() => go(index - 1)}
+          >
+            <IconChevronLeft />
+          </button>
+          <button
+            type="button"
+            className={styles.processNavBtn}
+            data-kind="next"
+            aria-label="Next step"
+            disabled={index === last}
+            onClick={() => go(index + 1)}
+          >
+            <IconChevronRight />
+          </button>
+        </div>
       </div>
 
-      <div className={styles.processFlow} aria-label="Work process steps">
-        <svg
-          className={styles.processSvg}
-          viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
-          fill="none"
-          aria-hidden="true"
+      <div
+        className={styles.processViewport}
+        ref={viewportRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+      >
+        <div
+          className={styles.processTrack}
+          data-dragging={dragging}
+          style={{ transform: `translate3d(${-shift + pull}px, 0, 0)` }}
         >
-          <path className={styles.processTrackLine} d={PATH} />
-          <path
-            className={styles.processDrawLine}
-            d={PATH}
-            ref={pathRef}
-            style={
-              {
-                strokeDasharray: length || 1,
-                strokeDashoffset: length ? length * (1 - progress) : 1,
-              } as CSSProperties
-            }
-          />
-        </svg>
-
-        {points.length ? (
-          <span
-            className={styles.processOrb}
-            style={{
-              left: `${(orb.x / VIEW_W) * 100}%`,
-              top: `${(orb.y / VIEW_H) * 100}%`,
-            }}
-          />
-        ) : null}
-
-        {points.map((point, itemIndex) => {
-          const step = process[itemIndex];
-          const on = itemIndex === index;
-          const done = itemIndex < index;
-
-          return (
-            <button
-              className={`${styles.processStation} ${on ? styles.processStationOn : ""} ${done ? styles.processStationDone : ""}`}
-              type="button"
+          {process.map((step, itemIndex) => (
+            <article
+              className={styles.processCard}
+              data-card=""
+              data-on={itemIndex === index}
+              data-step={step.number}
               key={step.number}
-              aria-current={on ? "step" : undefined}
-              aria-label={`${step.number} ${step.title}`}
-              onClick={() => go(itemIndex)}
-              style={{
-                left: `${(point.x / VIEW_W) * 100}%`,
-                top: `${(point.y / VIEW_H) * 100}%`,
+              onPointerEnter={moveGlow}
+              onPointerMove={moveGlow}
+              onPointerLeave={(event) => {
+                event.currentTarget.style.setProperty("--rx", "0deg");
+                event.currentTarget.style.setProperty("--ry", "0deg");
+              }}
+              onClick={() => {
+                if (dragged.current) return;
+                go(itemIndex);
               }}
             >
-              <span className={styles.processStationIcon}>
-                <ProcessIcon name={step.icon} />
-              </span>
-              <span className={styles.processStationName}>{step.title}</span>
-            </button>
-          );
-        })}
+              <span className={styles.processCardGrid} aria-hidden="true" />
+              <span className={styles.processCardOrb} aria-hidden="true" />
+              <span className={styles.processCardGlow} aria-hidden="true" />
+              <div className={styles.processCardTop}>
+                <b className={styles.processCardNum}>{step.number}</b>
+                <span className={styles.processCardIcon} aria-hidden="true">
+                  <i />
+                  <ProcessIcon name={step.icon} />
+                </span>
+              </div>
+              <h3>{step.title}</h3>
+              <p>{step.description}</p>
+              {itemIndex === index ? (
+                <span className={styles.processCardTimer} />
+              ) : null}
+            </article>
+          ))}
+        </div>
       </div>
 
-      <div className={styles.processCaption} key={active.number} data-dir={dir}>
-        <span className={styles.processCaptionNum}>{active.number}</span>
-        <div>
-          <h3>{active.title}</h3>
-          <p>{active.description}</p>
-        </div>
+      <div className={styles.processPager} aria-label="Work process steps">
+        {process.map((step, itemIndex) => (
+          <button
+            type="button"
+            className={styles.processPage}
+            data-on={itemIndex === index}
+            key={step.number}
+            aria-current={itemIndex === index ? "step" : undefined}
+            aria-label={`Step ${step.number} ${step.title}`}
+            onClick={() => go(itemIndex)}
+          >
+            {step.number}
+          </button>
+        ))}
       </div>
     </div>
   );

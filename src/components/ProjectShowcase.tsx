@@ -117,22 +117,22 @@ function WorkScreen({
   return <div className={styles.workFrame}>{frame}</div>;
 }
 
-function WorkYear({ year }: { year?: string }) {
+function WorkYear({ label }: { label: string }) {
   const slotRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     const slot = slotRef.current;
-    const label = labelRef.current;
-    if (!slot || !label) return;
+    const labelNode = labelRef.current;
+    if (!slot || !labelNode) return;
 
     let frame = 0;
 
     const update = () => {
       frame = 0;
-      const max = Math.max(0, slot.clientHeight - label.offsetHeight);
+      const max = Math.max(0, slot.clientHeight - labelNode.offsetHeight);
       if (!max) {
-        label.style.transform = "translateY(0px)";
+        labelNode.style.transform = "translateY(0px)";
         return;
       }
 
@@ -141,7 +141,7 @@ function WorkYear({ year }: { year?: string }) {
       const traveled = start - rect.top;
       const range = Math.max(1, rect.height - window.innerHeight * 0.42);
       const offset = Math.min(max, Math.max(0, (traveled / range) * max));
-      label.style.transform = `translateY(${offset}px)`;
+      labelNode.style.transform = `translateY(${offset}px)`;
     };
 
     const onScroll = () => {
@@ -157,30 +157,15 @@ function WorkYear({ year }: { year?: string }) {
       window.removeEventListener("resize", onScroll);
       if (frame) cancelAnimationFrame(frame);
     };
-  }, [year]);
+  }, [label]);
 
   return (
     <div className={styles.workYearSlot} ref={slotRef}>
       <p className={styles.workYear} ref={labelRef}>
         <span className={styles.workDot} aria-hidden="true" />
-        <span>{year ?? ""}</span>
+        <span>{label}</span>
       </p>
     </div>
-  );
-}
-
-function groupByYear(projects: Project[]) {
-  return projects.reduce<{ year?: string; items: Project[] }[]>(
-    (groups, project) => {
-      const last = groups[groups.length - 1];
-      if (last && last.year === project.year) {
-        last.items.push(project);
-        return groups;
-      }
-      groups.push({ year: project.year, items: [project] });
-      return groups;
-    },
-    [],
   );
 }
 
@@ -279,86 +264,18 @@ function WorkChapter({ project }: { project: Project }) {
   );
 }
 
-function ProjectCard({ project }: { project: Project }) {
-  const shots = projectShots(project);
-  const [hovered, setHovered] = useState(false);
-  const [slide, setSlide] = useState(0);
-  const hover = {
-    onMouseEnter: () => setHovered(true),
-    onMouseLeave: () => setHovered(false),
-    onFocus: () => setHovered(true),
-    onBlur: () => setHovered(false),
-  };
-
-  useEffect(() => {
-    if (!hovered || shots.length < 2) {
-      setSlide(0);
-      return;
-    }
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return;
-    }
-
-    const id = window.setInterval(() => {
-      setSlide((current) => (current + 1) % shots.length);
-    }, INNER_MS);
-
-    return () => window.clearInterval(id);
-  }, [hovered, shots.length]);
-
-  const thumb = shots.length ? (
-    <div className={styles.projectThumb} data-photo="true">
-      {shots.map((src, index) => (
-        <img
-          key={src}
-          src={src}
-          alt=""
-          className={styles.projectThumbImg}
-          data-on={index === slide}
-        />
-      ))}
-    </div>
-  ) : (
-    <div
-      className={styles.projectThumb}
-      style={{
-        background: `linear-gradient(145deg, ${project.accent}, #111 78%)`,
-      }}
-    >
-      <span>{project.name}</span>
-    </div>
-  );
-
-  const card = (
-    <>
-      {thumb}
-      <div className={styles.projectBody}>
-        <h3>{project.name}</h3>
-        <p className={styles.projectCategory}>{project.category}</p>
-        <p className={styles.projectDesc}>{project.description}</p>
-      </div>
-    </>
-  );
-
-  if (project.url) {
-    return (
-      <a
-        className={styles.projectCard}
-        href={project.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        {...hover}
-      >
-        {card}
-      </a>
-    );
-  }
-
+function WorkEntry({ project }: { project: Project }) {
   return (
-    <article className={styles.projectCard} {...hover}>
-      {card}
-    </article>
+    <div className={styles.workGroup}>
+      <WorkYear label={project.name} />
+      <div className={styles.workGroupMain}>
+        {project.showcase === "poster" ? (
+          <WorkPoster project={project} />
+        ) : (
+          <WorkChapter project={project} />
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -374,19 +291,8 @@ export default function ProjectShowcase({ projects }: { projects: Project[] }) {
         <p>(live platforms and backends)</p>
       </header>
 
-      {groupByYear(featured).map((group) => (
-        <div className={styles.workGroup} key={group.items.map((item) => item.name).join("-")}>
-          <WorkYear year={group.year} />
-          <div className={styles.workGroupMain}>
-            {group.items.map((project) =>
-              project.showcase === "poster" ? (
-                <WorkPoster key={project.name} project={project} />
-              ) : (
-                <WorkChapter key={project.name} project={project} />
-              ),
-            )}
-          </div>
-        </div>
+      {featured.map((project) => (
+        <WorkEntry key={project.name} project={project} />
       ))}
 
       {more.length > 0 ? (
@@ -405,9 +311,9 @@ export default function ProjectShowcase({ projects }: { projects: Project[] }) {
           </button>
 
           {open ? (
-            <div className={styles.projectGrid} id="more-projects">
+            <div id="more-projects">
               {more.map((project) => (
-                <ProjectCard key={project.name} project={project} />
+                <WorkEntry key={project.name} project={project} />
               ))}
             </div>
           ) : null}

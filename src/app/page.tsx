@@ -1,6 +1,5 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import HeroScroll from "@/components/HeroScroll";
 import Nav from "@/components/Nav";
 import ExperienceReveal from "@/components/ExperienceReveal";
 import ProcessReveal from "@/components/ProcessReveal";
@@ -8,9 +7,10 @@ import ProjectShowcase from "@/components/ProjectShowcase";
 import TechStack from "@/components/TechStack";
 import ServicesShowcase from "@/components/ServicesShowcase";
 import ContactStage from "@/components/ContactStage";
+import StatSheet from "@/components/StatSheet";
 import IntroScreen from "@/components/IntroScreen";
 import SocialIcon from "@/components/SocialIcon";
-import { IconCheck } from "@/components/Icons";
+import { IconArrow, IconCheck } from "@/components/Icons";
 import {
   education,
   experience,
@@ -22,9 +22,9 @@ import {
 import styles from "./page.module.css";
 
 const heroStats = [
-  { value: "1.6+", label: "Years Experience" },
-  { value: "10+", label: "Projects Completed" },
-  { value: "8+", label: "Live Web Apps" },
+  { value: "1.6", suffix: "+", label: "Years Experience" },
+  { value: "10", suffix: "+", label: "Projects Completed" },
+  { value: "8", suffix: "+", label: "Live Web Apps" },
 ];
 
 export default function Home() {
@@ -33,20 +33,10 @@ export default function Home() {
       <IntroScreen />
       <Nav />
       <main>
-        <HeroScroll>
+        <section className={styles.hero} id="home">
           <div className={styles.heroFrame}>
             <div className={styles.heroGlow} aria-hidden="true" />
-            <div className={styles.heroPhoto}>
-              <Image
-                src={profile.heroPhoto}
-                alt={profile.name}
-                width={900}
-                height={1200}
-                priority
-              />
-            </div>
-
-            <div className={styles.heroContent}>
+            <div className={styles.heroSplit}>
               <div className={styles.heroLeft}>
                 <p className={styles.eyebrow}>Hello, I&apos;m</p>
                 <h1 className={styles.heroName}>
@@ -57,6 +47,31 @@ export default function Home() {
                   Software Development Engineer
                 </p>
                 <p className={styles.heroBio}>{profile.heroBio}</p>
+                <div className={styles.heroActions}>
+                  <a
+                    className={styles.heroResume}
+                    href={profile.resumeFile}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className={styles.heroResumeText}>View Resume</span>
+                    <span className={styles.heroResumeOrb} aria-hidden="true">
+                      <IconArrow />
+                    </span>
+                  </a>
+                </div>
+              </div>
+
+              <div className={styles.heroVisual}>
+                <div className={styles.heroPhoto}>
+                  <Image
+                    src={profile.heroPhoto}
+                    alt={profile.name}
+                    width={1100}
+                    height={1460}
+                    priority
+                  />
+                </div>
                 <div className={styles.heroSocials}>
                   {socials.map((item) =>
                     item.href ? (
@@ -74,19 +89,11 @@ export default function Home() {
                   )}
                 </div>
               </div>
-
-            </div>
-
-            <div className={styles.heroStats}>
-              {heroStats.map((stat) => (
-                <div className={styles.heroStat} key={stat.label}>
-                  <span className={styles.heroStatValue}>{stat.value}</span>
-                  <span className={styles.heroStatLabel}>{stat.label}</span>
-                </div>
-              ))}
             </div>
           </div>
-        </HeroScroll>
+        </section>
+
+        <StatSheet stats={heroStats} />
 
         <section className={styles.workSection} id="portfolio">
           <ProjectShowcase projects={projects} />

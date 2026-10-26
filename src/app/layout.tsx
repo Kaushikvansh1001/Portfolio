@@ -18,6 +18,10 @@ export const metadata: Metadata = {
   title: "Vansh Kaushik | Software Development Engineer",
   description:
     "Portfolio of Vansh Kaushik — Python Developer and Back-End Developer building APIs, database-driven systems, and production deployments.",
+  icons: {
+    icon: [{ url: "/favicon_vk.png", type: "image/png" }],
+    apple: "/favicon_vk.png",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
