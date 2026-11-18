@@ -47,8 +47,8 @@ export const locations = [
     blurb: "VansoraAI — document Q&A, data analysis, and LLM integrations.",
     prompt: "Enter the laboratory.",
     art: "/vanshverse/bldg-lab.webp",
-    x: 3920,
-    width: 360,
+    x: 4220,
+    width: 430,
   },
   {
     id: "career" as const,
@@ -61,23 +61,23 @@ export const locations = [
     width: 250,
   },
   {
-    id: "connect" as const,
+    id: "clients" as const,
     index: "06",
+    name: "Client Boulevard",
+    blurb: "Freelance portfolio sites developed for clients.",
+    prompt: "Approach a client to view their live portfolio.",
+    x: 6020,
+    width: 780,
+  },
+  {
+    id: "connect" as const,
+    index: "07",
     name: "Connect Hub",
     blurb: "Email, LinkedIn, GitHub, and a message form.",
     prompt: "Open a line to the developer.",
     art: "/vanshverse/bldg-hub.webp",
-    x: 6020,
-    width: 360,
-  },
-  {
-    id: "clients" as const,
-    index: "07",
-    name: "Client Boulevard",
-    blurb: "Freelance portfolio sites developed for clients.",
-    prompt: "Approach a client to view their live portfolio.",
     x: 7100,
-    width: 780,
+    width: 360,
   },
 ];
 
@@ -87,8 +87,8 @@ export const boulevardNpcs: {
   x: number;
   flipX: boolean;
 }[] = [
-  { id: "priya-kharbanda", sheet: "priya", x: 6958, flipX: false },
-  { id: "radhika-garg", sheet: "radhika", x: 7242, flipX: true },
+  { id: "priya-kharbanda", sheet: "priya", x: 5878, flipX: false },
+  { id: "radhika-garg", sheet: "radhika", x: 6162, flipX: true },
 ];
 
 export const WORLD = {

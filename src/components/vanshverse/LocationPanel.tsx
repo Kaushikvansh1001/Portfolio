@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
-import { FileDown, Mail, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, FileDown, Mail } from "lucide-react";
 import { IconGithub, IconLinkedin } from "@/components/Icons";
 import { education } from "@/data/education";
 import { experience } from "@/data/experience";
@@ -11,9 +11,9 @@ import { highlights, profile } from "@/data/profile";
 import { vansora } from "@/data/projects";
 import { technologies } from "@/data/skills";
 import { locations, type LocationId } from "@/data/world";
+import CodexFrame from "./CodexFrame";
 import ContactPanel from "./ContactPanel";
 import ProjectShowcase from "./ProjectShowcase";
-import ScrollFrame from "./ScrollFrame";
 
 const CATEGORY: Record<LocationId, string> = {
   home: "Profile",
@@ -34,54 +34,52 @@ const SKILL_GROUPS = [
   { id: "tools", label: "Developer Tools" },
 ] as const;
 
-function useReduced() {
-  const reduced = useRef(false);
-  useEffect(() => {
-    reduced.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  }, []);
-  return reduced;
-}
+const ARCHIVE = locations.filter((item) => item.id !== "clients");
 
 function HomeBody() {
   return (
-    <div className="grid items-start gap-10 lg:grid-cols-[0.78fr_1.22fr]">
-      <div className="relative mx-auto w-full max-w-sm">
-        <div className="absolute -inset-3 border border-gold/25" />
-        <div className="relative overflow-hidden bg-void">
-          <Image
-            src={profile.cutout}
-            alt={profile.name}
-            width={480}
-            height={640}
-            className="h-auto w-full object-contain"
-          />
+    <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,0.86fr)_minmax(0,1.14fr)] lg:gap-10">
+      <figure className="mx-auto w-full max-w-[18rem] sm:max-w-sm lg:order-1">
+        <div className="codex-frame">
+          <div className="relative aspect-[3/4] max-h-[22rem] overflow-hidden sm:max-h-none">
+            <Image
+              src={profile.portrait}
+              alt={`${profile.name} portrait`}
+              fill
+              className="object-cover object-[center_18%]"
+              sizes="(max-width: 1024px) 80vw, 320px"
+              priority
+            />
+          </div>
         </div>
-        <p className="mt-3 font-mono text-[10px] tracking-[0.22em] text-gold">
+        <figcaption className="mt-3 px-1 font-mono text-[11px] tracking-[0.2em] text-gold">
           {profile.location}
-        </p>
-      </div>
-      <div>
-        <p className="font-mono text-[11px] tracking-[0.28em] text-gold">SOFTWARE DEVELOPMENT ENGINEER</p>
-        <h3 className="mt-2 font-display text-4xl leading-none text-ivory sm:text-5xl">{profile.name}</h3>
-        <p className="mt-3 text-sm uppercase tracking-[0.18em] text-forest">{profile.title}</p>
-        <p className="mt-5 max-w-xl text-sm leading-relaxed text-mist/80">{profile.aboutBody}</p>
-        <ul className="mt-6 grid gap-2 sm:grid-cols-2">
+        </figcaption>
+      </figure>
+      <div className="lg:order-2">
+        <p className="font-mono text-[12px] tracking-[0.26em] text-gold">{profile.title}</p>
+        <h3 className="mt-2 font-intro text-3xl leading-none text-ivory sm:text-5xl">{profile.name}</h3>
+        <p className="codex-copy mt-5">{profile.aboutBody}</p>
+        <ul className="mt-7 grid gap-3 sm:grid-cols-2">
           {highlights.map((item) => (
-            <li key={item} className="flex items-start gap-2 text-sm text-mist/80">
+            <li key={item} className="flex items-start gap-3 border border-steel bg-indigo/40 px-3 py-3 text-[0.95rem] leading-snug text-ivory">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-gold" />
               {item}
             </li>
           ))}
         </ul>
-        <div className="mt-8 border-t border-gold/20 pt-5">
-          <p className="font-mono text-[11px] tracking-[0.24em] text-gold">EDUCATION</p>
-          <div className="mt-4 space-y-4">
+        <div className="mt-9">
+          <p className="codex-rule">
+            <span>Education</span>
+            <i />
+          </p>
+          <div className="space-y-5">
             {education.map((item) => (
-              <div key={item.degree} className="grid gap-1 sm:grid-cols-[7.5rem_1fr]">
-                <p className="font-mono text-[11px] text-gold/80">{item.period}</p>
+              <div key={item.degree} className="grid gap-1 sm:grid-cols-[8.5rem_1fr]">
+                <p className="font-mono text-[12px] text-gold">{item.period}</p>
                 <div>
-                  <h4 className="font-display text-lg text-ivory">{item.degree}</h4>
-                  <p className="text-sm text-mist/70">
+                  <h4 className="font-intro text-2xl text-ivory">{item.degree}</h4>
+                  <p className="mt-1 text-base text-ash">
                     {item.school} · {item.detail}
                   </p>
                 </div>
@@ -96,26 +94,24 @@ function HomeBody() {
 
 function CodeBody() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-9">
       {SKILL_GROUPS.map((group) => {
         const items = technologies.filter((tech) => tech.category === group.id);
         if (!items.length) return null;
         return (
           <section key={group.id}>
-            <div className="mb-3 flex items-center gap-3">
-              <h4 className="font-mono text-[11px] uppercase tracking-[0.24em] text-gold">{group.label}</h4>
-              <span className="h-px flex-1 bg-gold/20" />
-            </div>
-            <ul className="flex flex-wrap gap-3">
+            <p className="codex-rule">
+              <span>{group.label}</span>
+              <i />
+            </p>
+            <ul className="grid gap-3 sm:grid-cols-2">
               {items.map((tech) => (
-                <li key={tech.name} className="group relative">
-                  <div className="flex items-center gap-3 border border-gold/15 bg-indigo/80 px-3 py-2.5 transition hover:border-gold/50 hover:bg-gold/10">
-                    <Image src={`/tech/${tech.logo}.png`} alt="" width={28} height={28} className="h-7 w-7 object-contain" />
-                    <span className="font-display text-base text-ivory">{tech.name}</span>
+                <li key={tech.name} className="flex items-start gap-3 border border-steel bg-indigo/35 px-3 py-3">
+                  <Image src={`/tech/${tech.logo}.png`} alt="" width={32} height={32} className="mt-0.5 h-8 w-8 object-contain" />
+                  <div>
+                    <h4 className="font-intro text-xl text-ivory">{tech.name}</h4>
+                    <p className="mt-1 text-sm leading-relaxed text-ash">{tech.blurb}</p>
                   </div>
-                  <p className="pointer-events-none absolute left-0 top-full z-10 mt-2 hidden w-64 border border-gold/20 bg-void px-3 py-2 text-xs leading-relaxed text-mist/75 group-hover:block">
-                    {tech.blurb} {tech.proof}
-                  </p>
                 </li>
               ))}
             </ul>
@@ -140,33 +136,39 @@ function LabBody() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-9">
       <div>
-        <p className="font-mono text-[11px] tracking-[0.24em] text-teal">{vansora.category}</p>
-        <h3 className="mt-2 font-display text-4xl text-ivory">{vansora.name}</h3>
-        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-mist/80">{vansora.description}</p>
+        <p className="font-mono text-[12px] tracking-[0.24em] text-teal">{vansora.category}</p>
+        <h3 className="mt-2 font-intro text-4xl text-ivory">{vansora.name}</h3>
+        <p className="codex-copy mt-4">{vansora.description}</p>
       </div>
       <div>
-        <p className="font-mono text-[11px] tracking-[0.24em] text-gold">ARCHITECTURE</p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-4">
-          {nodes.map((node, index) => (
-            <article key={node.title} className="relative border border-teal/25 bg-void/70 px-3 py-4 text-center">
-              {index < nodes.length - 1 ? (
-                <span className="absolute right-[-0.55rem] top-1/2 hidden h-px w-3 bg-teal/50 sm:block" />
-              ) : null}
-              <h4 className="font-display text-lg text-teal">{node.title}</h4>
-              <p className="mt-1 text-xs text-mist/70">{node.copy}</p>
+        <p className="codex-rule">
+          <span>Architecture</span>
+          <i />
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {nodes.map((node) => (
+            <article key={node.title} className="border border-teal/30 bg-indigo/40 px-4 py-5">
+              <h4 className="font-intro text-2xl text-teal">{node.title}</h4>
+              <p className="mt-2 text-sm leading-relaxed text-ash">{node.copy}</p>
             </article>
           ))}
         </div>
       </div>
-      <div className="grid gap-4 md:grid-cols-3">
-        {capabilities.map((item) => (
-          <article key={item.title} className="border-l-2 border-teal/50 pl-4">
-            <h4 className="font-display text-xl text-ivory">{item.title}</h4>
-            <p className="mt-1 text-sm text-mist/75">{item.copy}</p>
-          </article>
-        ))}
+      <div>
+        <p className="codex-rule">
+          <span>Capabilities</span>
+          <i />
+        </p>
+        <div className="grid gap-5 md:grid-cols-3">
+          {capabilities.map((item) => (
+            <article key={item.title} className="border-l-2 border-teal/60 pl-4">
+              <h4 className="font-intro text-2xl text-ivory">{item.title}</h4>
+              <p className="mt-2 text-base leading-relaxed text-ash">{item.copy}</p>
+            </article>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -174,34 +176,37 @@ function LabBody() {
 
 function CareerBody() {
   const listRef = useRef<HTMLOListElement>(null);
-  const reduced = useReduced();
 
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const items = listRef.current?.querySelectorAll("li");
-    if (reduced.current || !items?.length) return;
+    if (!items?.length) return;
     const tween = gsap.fromTo(
       items,
-      { opacity: 0, x: -16 },
-      { opacity: 1, x: 0, duration: 0.35, stagger: 0.12, ease: "power2.out" },
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.32, stagger: 0.08, ease: "power2.out" },
     );
     return () => {
       tween.kill();
     };
-  }, [reduced]);
+  }, []);
 
   return (
-    <ol ref={listRef} className="relative space-y-8 border-l border-gold/30 pl-8">
+    <ol ref={listRef} className="relative space-y-8 border-l border-gold/35 pl-8">
       {experience.map((job, index) => (
         <li key={`${job.company}-${job.role}`} className="relative">
-          <span className="absolute -left-[2.15rem] top-1 flex h-6 w-6 items-center justify-center rounded-full border border-gold bg-void font-mono text-[10px] text-gold">
+          <span className="absolute -left-[2.35rem] top-1 flex h-7 w-7 items-center justify-center rounded-full border border-gold bg-void font-mono text-[11px] text-gold">
             {String(index + 1).padStart(2, "0")}
           </span>
-          <p className="font-mono text-[11px] tracking-[0.18em] text-gold">{job.period}</p>
-          <h4 className="mt-1 font-display text-2xl text-ivory">{job.role}</h4>
-          <p className="text-sm text-forest">{job.company}</p>
-          <ul className="mt-3 space-y-2 text-sm leading-relaxed text-mist/75">
+          <p className="font-mono text-[12px] tracking-[0.16em] text-gold">{job.period}</p>
+          <h4 className="mt-1 font-intro text-3xl text-ivory">{job.role}</h4>
+          <p className="mt-1 text-base text-ash">{job.company}</p>
+          <ul className="mt-3 space-y-2 text-base leading-relaxed text-ivory/90">
             {job.points.map((point) => (
-              <li key={point}>{point}</li>
+              <li key={point} className="flex gap-2">
+                <span className="mt-2 h-1 w-1 shrink-0 bg-gold" />
+                <span>{point}</span>
+              </li>
             ))}
           </ul>
         </li>
@@ -219,22 +224,28 @@ function ConnectBody() {
   ];
 
   return (
-    <div className="space-y-8">
-      <div className="grid gap-3 sm:grid-cols-2">
-        {links.map((item) => (
-          <a
-            key={item.label}
-            href={item.href}
-            {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-            className="group flex items-center gap-4 border border-gold/20 bg-indigo/60 px-4 py-4 transition hover:border-gold hover:bg-gold/10"
-          >
-            <item.icon className="h-5 w-5 text-gold transition group-hover:scale-110" />
-            <span>
-              <span className="block font-display text-lg text-ivory">{item.label}</span>
-              <span className="block font-mono text-[11px] text-mist/60">{item.detail}</span>
-            </span>
-          </a>
-        ))}
+    <div className="grid gap-10 lg:grid-cols-[0.92fr_1.08fr]">
+      <div>
+        <p className="codex-rule">
+          <span>Direct lines</span>
+          <i />
+        </p>
+        <div className="grid gap-3">
+          {links.map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              className="group flex items-center gap-4 border border-steel bg-indigo/40 px-4 py-4 transition hover:border-gold"
+            >
+              <item.icon className="h-5 w-5 text-gold" />
+              <span>
+                <span className="block font-intro text-xl text-ivory">{item.label}</span>
+                <span className="mt-0.5 block font-mono text-[12px] text-ash">{item.detail}</span>
+              </span>
+            </a>
+          ))}
+        </div>
       </div>
       <ContactPanel />
     </div>
@@ -254,34 +265,52 @@ function PanelBody({ id }: { id: LocationId }) {
 export default function LocationPanel({
   id,
   onClose,
+  onNavigate,
 }: {
   id: LocationId;
   onClose: () => void;
+  onNavigate?: (id: LocationId) => void;
 }) {
   const location = locations.find((item) => item.id === id);
   if (!location) return null;
 
+  const archiveIndex = ARCHIVE.findIndex((item) => item.id === id);
+  const previous = archiveIndex >= 0 ? ARCHIVE[(archiveIndex - 1 + ARCHIVE.length) % ARCHIVE.length] : null;
+  const next = archiveIndex >= 0 ? ARCHIVE[(archiveIndex + 1) % ARCHIVE.length] : null;
+  const tone = id === "lab" || id === "connect" ? "teal" : "gold";
+
   return (
-    <ScrollFrame labelledBy="location-title" closeAria="Close location" onClose={onClose}>
-      {(close) => (
+    <CodexFrame
+      labelledBy="location-title"
+      closeAria="Close location"
+      kicker={`Location ${location.index} · ${CATEGORY[id]}`}
+      title={location.name}
+      subtitle={location.blurb}
+      tone={tone}
+      onClose={onClose}
+      footer={
         <>
-          <div className="mb-7 flex items-start justify-between gap-4">
-            <div>
-              <p className="font-mono text-[11px] tracking-[0.24em] text-gold">
-                LOCATION {location.index} · {CATEGORY[id]}
-              </p>
-              <h2 id="location-title" className="mt-1 font-display text-3xl text-ivory sm:text-4xl">
-                {location.name}
-              </h2>
-              <p className="mt-2 max-w-2xl text-sm text-mist/65">{location.blurb}</p>
+          <p className="codex-hint">Esc to close · {location.index} / 07</p>
+          {previous && next && onNavigate ? (
+            <div className="codex-nav">
+              <button type="button" onClick={() => onNavigate(previous.id)}>
+                <small>Previous</small>
+                <span className="inline-flex items-center gap-2">
+                  <ArrowLeft size={14} /> {previous.name}
+                </span>
+              </button>
+              <button type="button" onClick={() => onNavigate(next.id)}>
+                <small>Next</small>
+                <span className="inline-flex items-center gap-2">
+                  {next.name} <ArrowRight size={14} />
+                </span>
+              </button>
             </div>
-            <button type="button" onClick={close} className="scroll-seal" aria-label="Close">
-              <X size={16} />
-            </button>
-          </div>
-          <PanelBody id={id} />
+          ) : null}
         </>
-      )}
-    </ScrollFrame>
+      }
+    >
+      <PanelBody id={id} />
+    </CodexFrame>
   );
 }

@@ -15,8 +15,8 @@ type Key = { x: number; y: number; kind: TerrainKind };
 export const BASE = 792;
 
 export const FEATURES = {
-  bridge: { x0: 3540, x1: 3860, y: BASE },
-  arch: { x: 7100 },
+  bridge: { x0: 3240, x1: 3580, y: BASE },
+  arch: { x: 6020 },
 };
 
 const KEYS: Key[] = [

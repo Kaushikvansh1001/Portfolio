@@ -5,9 +5,12 @@ import dynamic from "next/dynamic";
 const GameCanvas = dynamic(() => import("@/components/vanshverse/GameCanvas"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-dvh items-center justify-center bg-void font-mono text-sm tracking-[0.2em] text-mist">
-      INITIALIZING WORLD...
-    </div>
+    <div
+      className="h-dvh bg-void"
+      style={{
+        background: "radial-gradient(ellipse at 50% 58%, rgba(197,161,91,0.2), #151719 62%)",
+      }}
+    />
   ),
 });
 

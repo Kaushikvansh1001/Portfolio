@@ -20,15 +20,30 @@ export default function GameCanvas() {
   const [mapOpen, setMapOpen] = useState(false);
   const [anchor, setAnchor] = useState<HudAnchor | null>(null);
   const [error, setError] = useState("");
+  const panelOpen = useRef(false);
+  const archiveOpen = useRef(false);
+  panelOpen.current = Boolean(open || clientOpen || mapOpen);
+  archiveOpen.current = Boolean(open || clientOpen);
 
   useEffect(() => {
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setOpen(null);
-        setClientOpen(null);
+        if (archiveOpen.current) return;
         setMapOpen(false);
+        return;
+      }
+      if (event.key === "Enter" || event.key === "e" || event.key === "E") {
+        if (panelOpen.current) return;
+        const target = event.target;
+        if (target instanceof HTMLElement) {
+          const tag = target.tagName;
+          if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+          if (event.key === "Enter" && target.closest(".plaque-enter")) return;
+        }
+        event.preventDefault();
+        gameApi.openNear?.();
       }
     };
     window.addEventListener("keydown", onKey);
@@ -80,7 +95,18 @@ export default function GameCanvas() {
       setClientOpen(id);
     });
     const offProgress = gameBus.on("player-progress", setProgress);
-    const offAnchor = gameBus.on("hud-anchor", setAnchor);
+    const offJump = gameBus.on("world-jump", () => {
+      setOpen(null);
+      setClientOpen(null);
+      setMapOpen(false);
+    });
+    const offAnchor = gameBus.on("hud-anchor", (next) => {
+      setAnchor((prev) => {
+        if (!next) return prev ? null : prev;
+        if (prev && prev.kind === next.kind && prev.id === next.id) return prev;
+        return next;
+      });
+    });
 
     return () => {
       cancelled = true;
@@ -89,11 +115,15 @@ export default function GameCanvas() {
       offOpen();
       offClient();
       offProgress();
+      offJump();
       offAnchor();
       gameApi.travelTo = null;
+      gameApi.teleportTo = null;
       gameApi.focusLocation = null;
       gameApi.focusClient = null;
       gameApi.clearFocus = null;
+      gameApi.openNear = null;
+      gameApi.holdMove = null;
       game?.destroy(true);
       if (gameRef.current && gameRef.current !== game) gameRef.current.destroy(true);
       gameRef.current = null;
@@ -102,7 +132,7 @@ export default function GameCanvas() {
 
   return (
     <div className="relative h-dvh overflow-hidden bg-void">
-      <SiteNav />
+      <SiteNav compact={Boolean(open || clientOpen)} />
       <div ref={hostRef} className="absolute inset-0 overflow-hidden [&_canvas]:block [&_canvas]:h-full [&_canvas]:w-full" />
       {error ? (
         <div className="absolute inset-0 z-20 flex items-center justify-center p-6">
@@ -129,7 +159,7 @@ export default function GameCanvas() {
           onEnterClient={setClientOpen}
         />
       )}
-      {open ? <LocationPanel id={open} onClose={() => setOpen(null)} /> : null}
+      {open ? <LocationPanel id={open} onClose={() => setOpen(null)} onNavigate={setOpen} /> : null}
       {clientOpen ? <ClientPanel id={clientOpen} onClose={() => setClientOpen(null)} /> : null}
     </div>
   );

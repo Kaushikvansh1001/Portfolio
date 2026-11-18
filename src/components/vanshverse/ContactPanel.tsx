@@ -52,59 +52,38 @@ export default function ContactPanel() {
 
   return (
     <div>
-      <p className="font-mono text-[11px] tracking-[0.24em] text-gold">SEND A SIGNAL</p>
-      <div className="mt-4">
+      <p className="codex-rule">
+        <span>Send a signal</span>
+        <i />
+      </p>
       {status === "sent" ? (
-        <div className="glass-panel flex flex-col items-start justify-center rounded-3xl p-8">
+        <div className="border border-teal/35 bg-indigo/40 px-5 py-8">
           <Check className="text-teal" />
-          <h4 className="mt-3 font-display text-2xl">Message sent</h4>
-          <p className="mt-2 text-sm text-mist/70">I&apos;ll get back to you soon.</p>
+          <h4 className="mt-3 font-intro text-3xl text-ivory">Message sent</h4>
+          <p className="mt-2 text-base text-ash">I&apos;ll get back to you soon.</p>
         </div>
       ) : (
         <form className="grid gap-4" onSubmit={onSubmit}>
           <input type="checkbox" name="botcheck" tabIndex={-1} autoComplete="off" className="hidden" />
-          <label className="grid gap-1 text-xs uppercase tracking-[0.16em] text-mist/60">
+          <label className="codex-field">
             Name
-            <input
-              required
-              minLength={2}
-              name="name"
-              autoComplete="name"
-              className="rounded-2xl border border-mist/15 bg-void/50 px-4 py-3 text-sm tracking-normal text-ivory outline-none focus:border-lavender"
-            />
+            <input required minLength={2} name="name" autoComplete="name" />
           </label>
-          <label className="grid gap-1 text-xs uppercase tracking-[0.16em] text-mist/60">
+          <label className="codex-field">
             Email
-            <input
-              required
-              type="email"
-              name="email"
-              autoComplete="email"
-              className="rounded-2xl border border-mist/15 bg-void/50 px-4 py-3 text-sm tracking-normal text-ivory outline-none focus:border-lavender"
-            />
+            <input required type="email" name="email" autoComplete="email" />
           </label>
-          <label className="grid gap-1 text-xs uppercase tracking-[0.16em] text-mist/60">
+          <label className="codex-field">
             Message
-            <textarea
-              required
-              minLength={10}
-              name="message"
-              rows={5}
-              className="rounded-2xl border border-mist/15 bg-void/50 px-4 py-3 text-sm tracking-normal text-ivory outline-none focus:border-lavender"
-            />
+            <textarea required minLength={10} name="message" rows={5} />
           </label>
-          <button
-            type="submit"
-            disabled={status === "sending"}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-gold px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-void disabled:opacity-60"
-          >
+          <button type="submit" disabled={status === "sending"} className="codex-link mt-1 justify-center disabled:opacity-60">
             {status === "sending" ? "Sending" : "Send message"}
             <ArrowRight size={16} />
           </button>
           {status === "error" ? <p className="text-sm text-red-300">{error}</p> : null}
         </form>
       )}
-      </div>
     </div>
   );
 }

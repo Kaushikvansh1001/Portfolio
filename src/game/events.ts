@@ -4,6 +4,10 @@ export type HudAnchor = {
   kind: "location" | "client";
   id: LocationId | ClientId;
   side: "left" | "right";
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 };
 
 export type GameEventMap = {
@@ -15,6 +19,7 @@ export type GameEventMap = {
   "hud-anchor": HudAnchor | null;
   "game-ready": boolean;
   "game-error": string;
+  "world-jump": LocationId;
 };
 
 type Handler<T> = (payload: T) => void;
@@ -39,7 +44,11 @@ export const gameBus = new GameBus();
 
 export const gameApi = {
   travelTo: null as null | ((id: LocationId) => void),
+  teleportTo: null as null | ((id: LocationId) => void),
   focusLocation: null as null | ((id: LocationId) => void),
   focusClient: null as null | ((id: ClientId) => void),
   clearFocus: null as null | (() => void),
+  openNear: null as null | (() => void),
+  holdMove: null as null | ((dir: -1 | 0 | 1) => void),
+  lastAnchor: null as HudAnchor | null,
 };

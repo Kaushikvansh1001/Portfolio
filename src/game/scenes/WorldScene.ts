@@ -15,8 +15,11 @@ const TEAL = 0x55c9b5;
 const VOID = 0x151719;
 const PLAYER_HEIGHT = SCALE.playerHeight;
 const NPC_HEIGHT = SCALE.npcHeight;
-const NPC_RANGE = 92;
 const NPC_STAND_OFF = 86;
+
+function reachOf(width: number) {
+  return Math.max(width * 0.5, 168);
+}
 
 const DEPTH = {
   sky: 0,
@@ -33,8 +36,8 @@ const DEPTH = {
   glow: 7,
   building: 8,
   lamp: 9,
+  shadow: 9.6,
   npc: 10,
-  shadow: 10,
   player: 11,
   label: 13,
   dim: 20,
@@ -78,11 +81,14 @@ export class WorldScene extends Phaser.Scene {
   private npcs: Phaser.GameObjects.Sprite[] = [];
   private npcLabels: Phaser.GameObjects.Text[] = [];
   private npcGlows: Phaser.GameObjects.Ellipse[] = [];
+  private npcShadows: Phaser.GameObjects.Ellipse[] = [];
+  private playerScale = 1;
   private water?: Phaser.GameObjects.Image;
   private greeting?: Phaser.GameObjects.Container;
   private greetingGone = false;
   private lastAnchorKey = "";
   private tick = 0;
+  private holdDir: -1 | 0 | 1 = 0;
   private readonly spawnX = 420;
 
   constructor() {
@@ -90,7 +96,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.spritesheet("hero", "/vanshverse/hero-v3.png?v=clear1", {
+    this.load.spritesheet("hero", "/vanshverse/hero-v4.png?v=paint2", {
       frameWidth: HERO_SHEET.frameWidth,
       frameHeight: HERO_SHEET.frameHeight,
       spacing: 0,
@@ -110,16 +116,16 @@ export class WorldScene extends Phaser.Scene {
     this.load.image("prop-grass", "/vanshverse/prop-grass.webp");
     this.load.image("prop-barrel", "/vanshverse/prop-barrel.webp");
     this.load.image("prop-bench", "/vanshverse/prop-bench.webp");
-    this.load.spritesheet("npc-priya", "/vanshverse/npc-priya.png?v=clear1", {
+    this.load.spritesheet("npc-priya", "/vanshverse/npc-priya.png?v=paint4", {
       frameWidth: NPC_SHEETS.priya.frameWidth,
       frameHeight: NPC_SHEETS.priya.frameHeight,
     });
-    this.load.spritesheet("npc-radhika", "/vanshverse/npc-radhika.png?v=clear1", {
+    this.load.spritesheet("npc-radhika", "/vanshverse/npc-radhika.png?v=paint4", {
       frameWidth: NPC_SHEETS.radhika.frameWidth,
       frameHeight: NPC_SHEETS.radhika.frameHeight,
     });
     for (const location of buildings) {
-      const bust = location.id === "career" ? "?v=clear1" : "";
+      const bust = location.id === "career" || location.id === "lab" ? "?v=clear2" : "";
       this.load.image(location.id, `${location.art}${bust}`);
     }
   }
@@ -182,6 +188,7 @@ export class WorldScene extends Phaser.Scene {
         { x: 0.16, y: 0.42, w: 10, h: 14 },
         { x: 0, y: 0.62, w: 12, h: 16 },
       ];
+      const lampColor = location.id === "lab" ? TEAL : GOLD;
       spots.forEach((spot) => {
         const light = this.add
           .ellipse(
@@ -189,8 +196,8 @@ export class WorldScene extends Phaser.Scene {
             gy - image.displayHeight * spot.y,
             spot.w,
             spot.h,
-            GOLD,
-            0.42,
+            lampColor,
+            location.id === "lab" ? 0.55 : 0.42,
           )
           .setDepth(DEPTH.lamp);
         windowLights.push(light);
@@ -223,14 +230,16 @@ export class WorldScene extends Phaser.Scene {
       this.labels.push(label);
     });
 
-    this.shadow = this.add.ellipse(420, groundAt(420) + 2, 48, 12, 0x000000, 0.4).setDepth(DEPTH.shadow);
+    this.shadow = this.add.ellipse(420, groundAt(420) + 2, 58, 16, 0x0b0c0d, 0.42).setDepth(DEPTH.shadow);
 
     this.createHeroAnims();
     this.player = this.add.sprite(420, groundAt(420), "hero", 0);
     this.player.setOrigin(0.5, 1);
-    this.player.setScale(PLAYER_HEIGHT / HERO_SHEET.frameHeight);
+    this.playerScale = PLAYER_HEIGHT / HERO_SHEET.frameHeight;
+    this.player.setScale(this.playerScale);
     this.player.setDepth(DEPTH.player);
     this.playAnim("idle", true);
+    this.breathe(this.player, this.playerScale);
     this.addGreeting();
     this.addBoulevard();
 
@@ -258,48 +267,72 @@ export class WorldScene extends Phaser.Scene {
         D: this.input.keyboard.addKey("D"),
       };
       this.shift = this.input.keyboard.addKey("SHIFT");
-      this.input.keyboard.on("keydown-ENTER", () => this.openNear());
-      this.input.keyboard.on("keydown-E", () => this.openNear());
     }
 
     this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
       if (this.focused || this.focusedClient) return;
       if (pointer.y > this.scale.height * 0.84) return;
       const hits = this.input.hitTestPointer(pointer);
-      if (hits.some((object) => this.npcs.includes(object as Phaser.GameObjects.Sprite))) return;
+      if (
+        hits.some(
+          (object) =>
+            this.npcs.includes(object as Phaser.GameObjects.Sprite) ||
+            this.markers.includes(object as Phaser.GameObjects.Image),
+        )
+      ) {
+        return;
+      }
+      this.pendingOpen = null;
+      this.pendingClient = null;
       const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
       this.targetX = Phaser.Math.Clamp(worldPoint.x, 120, width - 120);
     });
 
     gameApi.travelTo = (id) => this.approach(id, id !== "clients");
+    gameApi.teleportTo = (id) => this.teleport(id);
     gameApi.focusLocation = (id) => this.focus(id);
     gameApi.focusClient = (id) => this.focusClient(id);
     gameApi.clearFocus = () => this.clearFocus();
+    gameApi.openNear = () => this.openNear();
+    gameApi.holdMove = (dir) => {
+      this.holdDir = dir;
+      if (dir === 0) return;
+      this.targetX = null;
+      this.pendingOpen = null;
+      this.pendingClient = null;
+    };
     gameBus.emit("game-ready", true);
     this.lastProgress = Phaser.Math.Clamp(this.player.x / WORLD.width, 0, 1);
     gameBus.emit("player-progress", this.lastProgress);
     (window as Window & { __world?: WorldScene }).__world = this;
 
-    const onVis = () => this.pauseAmbience(document.hidden);
+    const onVis = () => {
+      if (!this.sys?.isActive()) return;
+      this.pauseAmbience(document.hidden);
+    };
     document.addEventListener("visibilitychange", onVis);
+    const dropVis = () => document.removeEventListener("visibilitychange", onVis);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      document.removeEventListener("visibilitychange", onVis);
+      dropVis();
       this.scale.off("resize", this.onResize, this);
     });
+    this.events.once(Phaser.Scenes.Events.DESTROY, dropVis);
   }
 
-  update(_time: number, delta: number) {
+  update(time: number, delta: number) {
+    this.tickNpcs(time);
     const dt = Math.min(delta, 33) / 1000;
     if (this.focused || this.focusedClient) {
+      this.holdDir = 0;
       this.walkVx = 0;
       this.player.y = groundAt(this.player.x);
-      this.shadow.setPosition(this.player.x, this.player.y + 2);
+      this.shadow.setPosition(this.player.x, this.player.y + 3);
       this.dismissGreeting();
       return;
     }
 
-    const left = Boolean(this.cursors?.left.isDown || this.wasd?.A.isDown);
-    const right = Boolean(this.cursors?.right.isDown || this.wasd?.D.isDown);
+    const left = Boolean(this.cursors?.left.isDown || this.wasd?.A.isDown || this.holdDir < 0);
+    const right = Boolean(this.cursors?.right.isDown || this.wasd?.D.isDown || this.holdDir > 0);
     const running = Boolean(this.shift?.isDown);
     const grade = slopeAt(this.player.x);
     const speed = (running ? RUN_SPEED : WALK_SPEED) * (grade > 0.14 ? 0.7 : 1);
@@ -310,10 +343,14 @@ export class WorldScene extends Phaser.Scene {
       vx = -speed;
       wantMove = true;
       this.targetX = null;
+      this.pendingOpen = null;
+      this.pendingClient = null;
     } else if (right) {
       vx = speed;
       wantMove = true;
       this.targetX = null;
+      this.pendingOpen = null;
+      this.pendingClient = null;
     } else if (this.targetX !== null) {
       const deltaX = this.targetX - this.player.x;
       if (Math.abs(deltaX) < 8) this.targetX = null;
@@ -328,7 +365,7 @@ export class WorldScene extends Phaser.Scene {
     const feet = groundAt(this.player.x);
     this.player.y = feet;
     this.tick += 1;
-    if (this.tick % 8 === 0) this.emitHudAnchor();
+    this.emitHudAnchor();
     if (wantMove && vx !== 0) {
       const flip = vx < 0;
       const restart = this.animState !== "walk" || this.player.flipX !== flip;
@@ -340,7 +377,8 @@ export class WorldScene extends Phaser.Scene {
       this.player.anims.timeScale = 1;
     }
 
-    this.shadow.setPosition(this.player.x, feet + 2);
+    this.shadow.setPosition(this.player.x, feet + 3);
+    this.shadow.setScale(this.animState === "walk" ? 1.08 : 1);
     this.syncGreeting();
 
     const progress = Phaser.Math.Clamp(this.player.x / WORLD.width, 0, 1);
@@ -349,13 +387,7 @@ export class WorldScene extends Phaser.Scene {
       gameBus.emit("player-progress", progress);
     }
 
-    let next: LocationId | null = null;
-    for (const location of locations) {
-      if (Math.abs(this.player.x - location.x) < location.width * 0.48) {
-        next = location.id;
-        break;
-      }
-    }
+    const next = this.nearestLocation(this.player.x, this.near);
     if (next !== this.near) {
       this.near = next;
       gameBus.emit("location-near", next);
@@ -363,13 +395,7 @@ export class WorldScene extends Phaser.Scene {
       this.emitHudAnchor();
     }
 
-    let nextNpc: ClientId | null = null;
-    for (const npc of boulevardNpcs) {
-      if (Math.abs(this.player.x - npc.x) < NPC_RANGE) {
-        nextNpc = npc.id;
-        break;
-      }
-    }
+    const nextNpc = this.near === "clients" ? this.nearestClient(this.player.x, this.nearNpc) : null;
     if (nextNpc !== this.nearNpc) {
       this.nearNpc = nextNpc;
       gameBus.emit("npc-near", nextNpc);
@@ -389,11 +415,10 @@ export class WorldScene extends Phaser.Scene {
 
     if (this.pendingOpen) {
       const loc = locations.find((item) => item.id === this.pendingOpen);
-      if (loc && Math.abs(this.player.x - loc.x) < 28) {
+      if (loc && this.inReach(loc)) {
         const id = this.pendingOpen;
         this.pendingOpen = null;
-        this.playAnim("interact", true);
-        gameBus.emit("location-open", id);
+        this.openLocation(id);
       }
     }
   }
@@ -406,7 +431,7 @@ export class WorldScene extends Phaser.Scene {
     this.anims.create({
       key: "idle",
       frames: this.anims.generateFrameNumbers("hero", { frames: [...HERO_SHEET.idle] }),
-      frameRate: 2,
+      frameRate: 1.6,
       repeat: -1,
       yoyo: true,
     });
@@ -423,27 +448,52 @@ export class WorldScene extends Phaser.Scene {
       frameRate: 6,
       repeat: 0,
     });
-    for (const key of ["priya", "radhika"] as const) {
-      const animKey = `npc-${key}-idle`;
-      if (this.anims.exists(animKey)) this.anims.remove(animKey);
-      this.anims.create({
-        key: animKey,
-        frames: this.anims.generateFrameNumbers(`npc-${key}`, { start: 0, end: NPC_SHEETS[key].frames - 1 }),
-        frameRate: 2,
-        repeat: -1,
-        yoyo: true,
-      });
-    }
+  }
+
+  private breathe(sprite: Phaser.GameObjects.Sprite, baseScale: number) {
+    if (this.reduced) return;
+    this.tweens.add({
+      targets: sprite,
+      scaleY: baseScale * 1.03,
+      duration: 2100,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
+  }
+
+  private tickNpcs(time: number) {
+    this.npcs.forEach((sprite, index) => {
+      const sheet = boulevardNpcs[index]?.sheet;
+      if (!sheet) return;
+      const base = NPC_HEIGHT / NPC_SHEETS[sheet].frameHeight;
+      sprite.setScale(base);
+      sprite.setAngle(0);
+      if (this.reduced) {
+        sprite.setFrame(0);
+        return;
+      }
+      if (sprite.anims.isPlaying) sprite.anims.stop();
+      const cycle = (time / 1000 + index * 2.4) % 5.4;
+      let frame = 0;
+      if (cycle < 1.35) frame = 0;
+      else if (cycle < 3.35) frame = 1;
+      else if (cycle < 5.05) frame = 2;
+      else frame = 3;
+      sprite.setFrame(frame);
+    });
   }
 
   private playAnim(next: AnimState, force = false) {
-    const currentKey = this.player.anims.currentAnim?.key;
+    const anims = this.player?.anims;
+    if (!anims) return;
     this.animState = next;
+    const currentKey = anims.currentAnim?.key;
     if (!force && currentKey === next) {
-      if (!this.player.anims.isPlaying) this.player.anims.restart();
+      if (!anims.isPlaying) anims.restart();
       return;
     }
-    this.player.anims.play(next);
+    if (this.anims.exists(next)) anims.play(next, true);
   }
 
   private greetingHeadY() {
@@ -554,9 +604,19 @@ export class WorldScene extends Phaser.Scene {
       this.tweens.add({ targets: label, alpha: active ? 1 : 0, duration: this.reduced ? 0 : 160 });
       if (!this.focused && !this.focusedClient) {
         const nearHere = buildings[index].id === this.near;
-        this.glows[index].setAlpha(nearHere ? 0.4 : 0.18);
-        this.markers[index].setTint(nearHere ? 0xfff1d0 : 0xffffff);
+        this.markers[index].setTint(nearHere ? 0xffe7c2 : 0xffffff);
         this.setWindows(index, nearHere);
+        if (nearHere) {
+          this.glows[index].setAlpha(0.7);
+          this.tweens.add({
+            targets: this.glows[index],
+            alpha: 0.42,
+            duration: this.reduced ? 0 : 520,
+            ease: "Sine.easeOut",
+          });
+        } else {
+          this.glows[index].setAlpha(0.18);
+        }
       }
     });
   }
@@ -565,28 +625,103 @@ export class WorldScene extends Phaser.Scene {
     this.windows[index]?.forEach((light) => light.setScale(bright ? 1.25 : 1));
   }
 
+  private teleport(id: LocationId) {
+    const location = locations.find((item) => item.id === id);
+    if (!location) return;
+    this.pendingOpen = null;
+    this.pendingClient = null;
+    this.targetX = null;
+    this.dismissGreeting();
+    this.player.x = location.x;
+    this.player.y = groundAt(location.x);
+    this.shadow.setPosition(this.player.x, this.player.y + 3);
+    this.playAnim("idle", true);
+    this.cameras.main.stopFollow();
+    this.cameras.main.centerOn(this.player.x, this.player.y);
+    this.followWalker();
+    this.near = id;
+    this.nearNpc = id === "clients" ? this.nearestClient(location.x, null) : null;
+    this.lastAnchorKey = "";
+    gameBus.emit("world-jump", id);
+    gameBus.emit("location-near", this.near);
+    gameBus.emit("npc-near", this.nearNpc);
+    this.refreshPresence();
+    this.refreshNpcs();
+    this.emitHudAnchor();
+  }
+
+  private inReach(location: { x: number; width: number }, x = this.player.x) {
+    return Math.abs(x - location.x) < reachOf(location.width);
+  }
+
+  private nearestLocation(x: number, current: LocationId | null): LocationId | null {
+    let best: (typeof locations)[number] | null = null;
+    let bestDist = Infinity;
+    for (const location of locations) {
+      const dist = Math.abs(x - location.x);
+      const reach = reachOf(location.width);
+      const hold = current === location.id ? reach * 1.22 : reach;
+      if (dist < hold && dist < bestDist) {
+        best = location;
+        bestDist = dist;
+      }
+    }
+    return best?.id ?? null;
+  }
+
+  private openLocation(id: LocationId) {
+    if (this.focused || this.focusedClient) return;
+    if (id === "clients") {
+      this.approachNpc(this.nearestClient(this.player.x, this.nearNpc), true);
+      return;
+    }
+    this.pendingOpen = null;
+    this.pendingClient = null;
+    this.targetX = null;
+    this.playAnim("interact", true);
+    gameBus.emit("location-open", id);
+  }
+
   private approach(id: LocationId, open: boolean) {
     const location = locations.find((item) => item.id === id);
     if (!location) return;
+    if (open && this.inReach(location)) {
+      this.openLocation(id);
+      return;
+    }
     this.targetX = location.x;
     this.pendingOpen = open && id !== "clients" ? id : null;
-    if (open && id !== "clients" && Math.abs(this.player.x - location.x) < 28) {
-      this.pendingOpen = null;
-      this.playAnim("interact", true);
-      gameBus.emit("location-open", id);
-    }
   }
 
   private approachNpc(id: ClientId, open: boolean) {
     const npc = boulevardNpcs.find((item) => item.id === id);
     if (!npc) return;
-    this.targetX = this.standOffX(npc.x);
-    this.pendingClient = open ? id : null;
-    if (open && Math.abs(this.player.x - this.targetX) < 16) {
+    if (open) {
+      if (this.focused || this.focusedClient) return;
       this.pendingClient = null;
+      this.targetX = null;
       this.playAnim("interact", true);
       gameBus.emit("client-open", id);
+      return;
     }
+    this.targetX = this.standOffX(npc.x);
+  }
+
+  private nearestClient(x: number, current: ClientId | null): ClientId {
+    let best = boulevardNpcs[0];
+    let bestDist = Math.abs(x - best.x);
+    for (const npc of boulevardNpcs) {
+      const dist = Math.abs(x - npc.x);
+      if (dist < bestDist) {
+        best = npc;
+        bestDist = dist;
+      }
+    }
+    if (current) {
+      const held = boulevardNpcs.find((item) => item.id === current);
+      if (held && Math.abs(x - held.x) <= bestDist + 48) return current;
+    }
+    return best.id;
   }
 
   private standOffX(npcX: number) {
@@ -595,14 +730,12 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private openNear() {
+    if (this.focused || this.focusedClient) return;
     if (this.nearNpc) {
       this.approachNpc(this.nearNpc, true);
       return;
     }
-    if (this.near && this.near !== "clients") {
-      this.playAnim("interact", true);
-      gameBus.emit("location-open", this.near);
-    }
+    if (this.near) this.openLocation(this.near);
   }
 
   private focus(id: LocationId) {
@@ -713,7 +846,10 @@ export class WorldScene extends Phaser.Scene {
 
   private fitCamera() {
     const cam = this.cameras.main;
-    const bottomPad = Math.min(64, Math.max(44, cam.height * 0.06));
+    const mobile = cam.width <= 640;
+    const bottomPad = mobile
+      ? Math.min(96, Math.max(76, cam.height * 0.11))
+      : Math.min(64, Math.max(44, cam.height * 0.06));
     cam.setDeadzone(72, 24);
     cam.setFollowOffset(0, cam.height / 2 - bottomPad);
     cam.setZoom(SCALE.cameraZoom);
@@ -725,46 +861,85 @@ export class WorldScene extends Phaser.Scene {
     this.fitCamera();
   }
 
+  private screenOf(worldX: number, worldY: number) {
+    const view = this.cameras.main.worldView;
+    const snap = (value: number) => Math.round(value / 2) * 2;
+    return {
+      x: snap(((worldX - view.x) / Math.max(1, view.width)) * this.scale.width),
+      y: snap(((worldY - view.y) / Math.max(1, view.height)) * this.scale.height),
+    };
+  }
+
   private emitHudAnchor() {
-    const cam = this.cameras.main;
-    const view = cam.worldView;
-    const toScreen = (worldX: number) => ((worldX - view.x) / Math.max(1, view.width)) * this.scale.width;
+    const view = this.cameras.main.worldView;
+    const px = this.scale.width / Math.max(1, view.width);
+    const py = this.scale.height / Math.max(1, view.height);
 
     if (this.nearNpc) {
       const npc = boulevardNpcs.find((item) => item.id === this.nearNpc);
       if (!npc) return;
-      const sx = toScreen(npc.x);
-      const side = sx < this.scale.width * 0.5 ? "right" : "left";
-      const key = `client:${npc.id}:${side}`;
+      const sprite = this.npcs[boulevardNpcs.findIndex((item) => item.id === npc.id)];
+      const height = sprite?.displayHeight ?? NPC_HEIGHT;
+      const width = sprite?.displayWidth ?? 64;
+      const { x, y } = this.screenOf(npc.x, groundAt(npc.x) - height);
+      const side: "left" | "right" = x < this.scale.width * 0.5 ? "right" : "left";
+      const key = `client:${npc.id}:${x}:${y}`;
       if (key === this.lastAnchorKey) return;
       this.lastAnchorKey = key;
-      gameBus.emit("hud-anchor", { kind: "client", id: npc.id, side });
+      const anchor = {
+        kind: "client" as const,
+        id: npc.id,
+        side,
+        x,
+        y,
+        width: Math.round(width * px),
+        height: Math.round(height * py),
+      };
+      gameApi.lastAnchor = anchor;
+      gameBus.emit("hud-anchor", anchor);
       return;
     }
 
     if (this.near) {
       const loc = locations.find((item) => item.id === this.near);
       if (!loc) return;
-      const sx = toScreen(loc.x);
-      const side = sx < this.scale.width * 0.5 ? "right" : "left";
-      const key = `location:${loc.id}:${side}`;
+      const marker = this.markers[buildings.findIndex((item) => item.id === loc.id)];
+      const height = marker?.displayHeight ?? (loc.id === "clients" ? 428 : 240);
+      const width = marker?.displayWidth ?? loc.width;
+      const { x, y } = this.screenOf(loc.x, groundAt(loc.x) - height);
+      const side: "left" | "right" = x < this.scale.width * 0.5 ? "right" : "left";
+      const key = `location:${loc.id}:${x}:${y}`;
       if (key === this.lastAnchorKey) return;
       this.lastAnchorKey = key;
-      gameBus.emit("hud-anchor", { kind: "location", id: loc.id, side });
+      const anchor = {
+        kind: "location" as const,
+        id: loc.id,
+        side,
+        x,
+        y,
+        width: Math.round(width * px),
+        height: Math.round(height * py),
+      };
+      gameApi.lastAnchor = anchor;
+      gameBus.emit("hud-anchor", anchor);
       return;
     }
 
     if (this.lastAnchorKey) {
       this.lastAnchorKey = "";
+      gameApi.lastAnchor = null;
       gameBus.emit("hud-anchor", null);
     }
   }
 
   private pauseAmbience(pause: boolean) {
-    this.lightTweens.forEach((tween) => (pause ? tween.pause() : tween.resume()));
-    if (!pause && this.animState) {
-      this.player.anims.play(this.animState, true);
-    }
+    if (!this.sys?.isActive()) return;
+    this.lightTweens.forEach((tween) => {
+      if (!tween) return;
+      if (pause) tween.pause();
+      else tween.resume();
+    });
+    if (!pause && this.animState) this.playAnim(this.animState, true);
   }
 
   private addStars() {
@@ -786,13 +961,19 @@ export class WorldScene extends Phaser.Scene {
 
     const bridge = FEATURES.bridge;
     const mid = (bridge.x0 + bridge.x1) / 2;
-    this.water = this.add.image(mid, bridge.y + 28, "prop-water").setOrigin(0.5, 0.5).setDepth(DEPTH.structure - 0.2);
-    this.water.setDisplaySize(bridge.x1 - bridge.x0 - 28, 36);
+    const span = bridge.x1 - bridge.x0;
     this.add
-      .image(mid, bridge.y, "prop-bridge")
-      .setOrigin(0.5, 0.86)
+      .rectangle(mid, bridge.y + 8, span + 64, 58, 0x152024)
+      .setOrigin(0.5, 0)
+      .setDepth(DEPTH.water);
+    this.water = this.add.image(mid, bridge.y + 34, "prop-water").setOrigin(0.5, 0.5).setDepth(DEPTH.water + 0.1);
+    this.water.setDisplaySize(span + 18, 42);
+    const bridgeH = Math.round((span + 48) * (270 / 720));
+    this.add
+      .image(mid, bridge.y + 6, "prop-bridge")
+      .setOrigin(0.5, 0.8)
       .setDepth(DEPTH.structure)
-      .setDisplaySize(bridge.x1 - bridge.x0 + 24, 92);
+      .setDisplaySize(span + 48, bridgeH);
 
     this.dressDistricts();
   }
@@ -818,7 +999,7 @@ export class WorldScene extends Phaser.Scene {
 
   private stampEdgeGrass() {
     const spots = [
-      560, 980, 1180, 1480, 1980, 2280, 3180, 4180, 4480, 4680, 5820, 6280, 6620, 7780,
+      560, 980, 1180, 1480, 1980, 2280, 3180, 4180, 4480, 4680, 5480, 6500, 6900, 7780,
     ];
     spots.forEach((x, i) => {
       if (kindAt(x) === "bridge") return;
@@ -852,7 +1033,8 @@ export class WorldScene extends Phaser.Scene {
     this.plant("trees", 2260, 190, 84, DEPTH.mid);
     this.plant("trees", 3180, 170, 78, DEPTH.mid);
     this.plant("trees", 4580, 180, 82, DEPTH.mid);
-    this.plant("trees", 5820, 200, 88, DEPTH.mid);
+    this.plant("trees", 5480, 200, 88, DEPTH.mid);
+    this.plant("trees", 6680, 186, 82, DEPTH.mid);
 
     this.plant("prop-grass", 640, 44, 36, DEPTH.edge);
     this.plant("prop-grass", 900, 40, 34, DEPTH.edge);
@@ -871,20 +1053,20 @@ export class WorldScene extends Phaser.Scene {
     this.plant("prop-bench", 2920, 50, 28, DEPTH.edge);
     this.addSign(2340, "PROJECT DISTRICT");
 
-    this.add.ellipse(3960, groundAt(3960) - 90, 120, 70, TEAL, 0.1).setDepth(DEPTH.glow);
-    this.lantern(3720, TEAL);
-    this.lantern(4180, TEAL);
-    this.plant("prop-barrel", 3780, 26, 32, DEPTH.edge);
-    this.addSign(3680, "AI LABORATORY");
+    this.add.ellipse(4220, groundAt(4220) - 110, 210, 96, TEAL, 0.16).setDepth(DEPTH.glow);
+    this.lantern(4020, TEAL);
+    this.lantern(4440, TEAL);
+    this.plant("prop-barrel", 4080, 26, 32, DEPTH.edge);
+    this.addSign(3980, "AI LABORATORY");
 
     this.lantern(4680);
     this.lantern(5260);
     this.addSign(4880, "CAREER TOWER");
 
-    this.plant("prop-bench", 5860, 52, 30, DEPTH.edge);
-    this.lantern(5920);
-    this.lantern(6220);
-    this.addSign(5780, "CONNECT HUB");
+    this.plant("prop-bench", 6940, 52, 30, DEPTH.edge);
+    this.lantern(7000);
+    this.lantern(7300);
+    this.addSign(6860, "CONNECT HUB");
   }
 
   private addSign(x: number, title: string) {
@@ -906,10 +1088,10 @@ export class WorldScene extends Phaser.Scene {
     const center = FEATURES.arch.x;
     const gy = (x: number) => groundAt(x);
 
-    this.plant("prop-grass", 6580, 44, 36, DEPTH.edge);
-    this.plant("prop-grass", 7620, 42, 36, DEPTH.edge);
-    this.plant("prop-bench", 6660, 50, 28, DEPTH.edge);
-    this.plant("prop-bench", 7540, 50, 28, DEPTH.edge);
+    this.plant("prop-grass", center - 520, 44, 36, DEPTH.edge);
+    this.plant("prop-grass", center + 520, 42, 36, DEPTH.edge);
+    this.plant("prop-bench", center - 440, 50, 28, DEPTH.edge);
+    this.plant("prop-bench", center + 440, 50, 28, DEPTH.edge);
 
     this.add
       .image(center, gy(center), "prop-arch")
@@ -920,20 +1102,28 @@ export class WorldScene extends Phaser.Scene {
     const sign = this.add.image(center, gy(center), "sign-boulevard").setOrigin(0.5, 1).setDepth(DEPTH.building);
     sign.setDisplaySize(220, 220 * (sign.height / Math.max(sign.width, 1)));
 
-    this.lantern(6620);
-    this.lantern(7580);
+    this.lantern(center - 480);
+    this.lantern(center + 480);
 
     boulevardNpcs.forEach((npc, index) => {
       const glow = this.add.ellipse(npc.x, gy(npc.x) + 2, 54, 16, GOLD, 0.16).setDepth(DEPTH.glow);
       this.npcGlows.push(glow);
+      const contact = this.add.ellipse(npc.x, gy(npc.x) + 3, 52, 14, 0x0b0c0d, 0.38).setDepth(DEPTH.shadow);
+      this.npcShadows.push(contact);
 
       const sprite = this.add.sprite(npc.x, gy(npc.x), `npc-${npc.sheet}`, 0);
       sprite.setOrigin(0.5, 1);
       sprite.setFlipX(npc.flipX);
-      sprite.setScale(NPC_HEIGHT / NPC_SHEETS[npc.sheet].frameHeight);
+      const npcScale = NPC_HEIGHT / NPC_SHEETS[npc.sheet].frameHeight;
+      sprite.setScale(npcScale);
       sprite.setDepth(DEPTH.npc);
-      sprite.setInteractive({ useHandCursor: true });
-      sprite.play(`npc-${npc.sheet}-idle`);
+      const fw = NPC_SHEETS[npc.sheet].frameWidth;
+      const fh = NPC_SHEETS[npc.sheet].frameHeight;
+      sprite.setInteractive(
+        new Phaser.Geom.Rectangle(-Math.round(fw * 0.25), 0, Math.round(fw * 1.5), fh),
+        Phaser.Geom.Rectangle.Contains,
+      );
+      if (sprite.input) sprite.input.cursor = "pointer";
       sprite.on("pointerover", () => this.hoverNpc(index, true));
       sprite.on("pointerout", () => this.hoverNpc(index, false));
       sprite.on("pointerup", () => this.approachNpc(npc.id, true));
