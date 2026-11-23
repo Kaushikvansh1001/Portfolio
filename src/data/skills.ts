@@ -23,4 +23,5 @@ export const technologies = [
   { name: "Play Store", logo: "playstore", category: "cloud", blurb: "Android app publishing.", proof: "Android releases at Raymoon." },
   { name: "Git", logo: "git", category: "tools", blurb: "Version control and collaboration.", proof: "Daily version control on every project." },
   { name: "GitHub", logo: "github", category: "tools", blurb: "Repos, reviews, and shipping code.", proof: "Repos and shipping for live work." },
+  { name: "Postman", logo: "postman", category: "tools", blurb: "API testing and request collections.", proof: "Endpoint testing for Python APIs." },
 ] as const;

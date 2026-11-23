@@ -23,6 +23,7 @@ const IMAGE_LOGOS: Record<
   figma: { src: "/tech/figma.png", width: 170, height: 256 },
   git: { src: "/tech/git.png", width: 512, height: 512 },
   github: { src: "/tech/github.png", width: 512, height: 512 },
+  postman: { src: "/tech/postman.png", width: 512, height: 512 },
 };
 
 function Mark({
